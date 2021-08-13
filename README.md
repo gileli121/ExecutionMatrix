@@ -1,5 +1,5 @@
 # ExecutionMatrix
-ExecutionMatrix - Deploy, Host and view your JUnit report in external reporting tool
+ExecutionMatrix - Deploy, Host, and view your JUnit report in an external reporting tool
 
 
 # Screenshots
@@ -13,7 +13,7 @@ ExecutionMatrix - Deploy, Host and view your JUnit report in external reporting 
 
 
 # Installation
-For now there is no installation method & guide.
+For now, there is no installation method & guide.
 You will need to build the project on your own
 
 # How to use
@@ -24,7 +24,7 @@ You will need to build the project on your own
 
 ## Setup the JUnit extension & execution configurations
 
-In order to be able to report from JUnit to the server, you need to use `TestMatrixExtension` JUnit extension class.
+In order to be able to report from JUnit to the server, you need to use the `TestMatrixExtension` JUnit extension class.
 Add the following annotation above the test class
 
 ```java
@@ -33,14 +33,14 @@ Add the following annotation above the test class
 public class MyFakeBlogWebAppTests {
 ```
 
-Next, define environment variable that will hold the build version.
-This is used in order to separate the execution reports by build versions later.
+Next, define the environment variable that will hold the build version.
+This is used to separate the execution reports by build versions later.
 ![image](https://user-images.githubusercontent.com/17680514/129416721-186a76ce-223a-4b7e-a1de-7e2295bc9f46.png)
 
 
 Add `@TestWithVersionEnv("TARGET_BUILD_VERSION")` annotation above the tests class. `TARGET_BUILD_VERSION` can be any name.
-In this case, `TARGET_BUILD_VERSION` will be the name of the environment variable that hold the version under test.
-For example the `TARGET_BUILD_VERSION` value can be `v0.0.1`. When you have a new build, you should change this value to reflect the new version
+In this case, `TARGET_BUILD_VERSION` will be the name of the environment variable that holds the version under test.
+For example, the `TARGET_BUILD_VERSION` value can be `v0.0.1`. When you have a new build, you should change this value to reflect the new version
 so the new reports will be under the new version.
 
 
@@ -51,15 +51,15 @@ so the new reports will be under the new version.
 public class MyFakeBlogWebAppTests {
 ```
 
-If you use intellij, you can configure the `TARGET_BUILD_VERSION` environment variable here:
+If you use IntelliJ, you can configure the `TARGET_BUILD_VERSION` environment variable here:
 ![image](https://user-images.githubusercontent.com/17680514/129416298-f9148d8d-5b95-4413-b516-bc91a5b47b99.png)
 
 
-Next, you must to add `@Tag` to the test class & tests.
-The tag is mapped to feature that shown here:
+Next, you must add `@Tag` to the test class & tests.
+The tag is mapped to the feature that shown here:
 ![image](https://user-images.githubusercontent.com/17680514/129415442-2462de5f-5fe5-4157-840f-764261e887c7.png)
 
-You will also be able to select only executions that related to the `@Tag`/Feature
+You will also be able to select only executions that are related to the `@Tag`/Feature
 ![image](https://user-images.githubusercontent.com/17680514/129415665-9ab0e8e0-8b86-4562-9761-1c45b334802c.png)
 
 
@@ -69,7 +69,7 @@ For example:
 
 
 Next, It is highly recommended to add `@DisplayName` annotation to the class and tests.
-The value in the `@DisplayName` is simplified name that is easier to read.
+The value in the `@DisplayName` is a simplified name that is easier to read.
 The `@DisplayName` is reflected here:
 ![image](https://user-images.githubusercontent.com/17680514/129417180-eb3b67a5-980d-48d6-83bb-ee08b7fc5fea.png)
 ![image](https://user-images.githubusercontent.com/17680514/129417324-10f37ca2-6fcf-4e43-8d93-8d16522bf1a2.png)
