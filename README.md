@@ -4,10 +4,12 @@ ExecutionMatrix - Deploy, Host and view your JUnit report in external reporting 
 
 # Screenshots
 ![image](https://user-images.githubusercontent.com/17680514/129413973-ac29371f-f315-46ec-b46a-0333d7920b8a.png)
+![image](https://user-images.githubusercontent.com/17680514/129417972-5238bb6e-9779-4ce7-8ae1-c49fe0aac617.png)
+![image](https://user-images.githubusercontent.com/17680514/129418031-a10eb7d6-fe9f-4ab3-95c0-a249c45c5b16.png)
 ![image](https://user-images.githubusercontent.com/17680514/129414108-35a8806b-13ba-45ed-9741-f2e125faef36.png)
 ![image](https://user-images.githubusercontent.com/17680514/129414258-55819f21-2616-48b7-9de8-65ef15287c07.png)
+![image](https://user-images.githubusercontent.com/17680514/129417942-5a8d3c29-20bc-4325-879a-d66354f11b34.png)
 
-![image](https://user-images.githubusercontent.com/17680514/129414534-03c8e53e-ab50-488f-a7bc-541e0605175c.png)
 
 
 # Installation
