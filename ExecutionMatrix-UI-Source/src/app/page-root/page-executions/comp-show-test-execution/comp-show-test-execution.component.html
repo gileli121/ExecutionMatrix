@@ -1,0 +1,42 @@
+<div *ngIf="!testExecution">Loading ...</div>
+
+<ul *ngIf="testExecution" style="padding: 0">
+  <ng-template #recursiveList let-testExecution>
+    <li *ngFor="let item of testExecution" class="test-row-container">
+
+      <div class="test-row test-row-left-content" style="height: 8px;">
+        <button mat-icon-button (click)="onTestToggleExpand(item)"
+                [ngClass]="{'test-row-toggle-expand-icon-hidden': !item.childExecutions || item.childExecutions.length == 0}">
+          <mat-icon> {{!item.isExpanded ? 'chevron_right' : 'expand_more'}}  </mat-icon>
+        </button>
+
+
+
+      </div>
+
+      <button mat-button (click)="onSubExecutionResultSelected(item)" class="test-row test-row-item" style="display: inline-block" [ngClass]="{
+        'test-row-passed':
+          item.executionResult === ExecutionResult.passed,
+        'test-row-failed':
+          item.executionResult === ExecutionResult.failed,
+        'test-row-skipped':
+          item.executionResult === ExecutionResult.skipped,
+        'test-row-unexecuted': item.executionResult === ExecutionResult.unexecuted,
+          'test-row-selected ': item == selectedTestExecRes
+      }">
+
+        <div class="test-row-name">
+          {{item.testNameView}} ({{utils.getExecutionResultString(item.executionResult)}})
+        </div>
+      </button>
+
+      <ul *ngIf="item.childExecutions && item.childExecutions.length > 0 && item.isExpanded">
+        <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: item.childExecutions }"></ng-container>
+      </ul>
+
+    </li>
+  </ng-template>
+
+  <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: testExecution }"></ng-container>
+</ul>
+

@@ -1,0 +1,19 @@
+<mat-card class="mat-card-style">
+  <span style="margin: auto">
+    <div *ngIf="!globals.versions || globals.versions.length > 0">
+      <button mat-button color="primary" [matMenuTriggerFor]="menu">
+        <mat-icon style="margin-right: 10px">build</mat-icon>
+        {{!globals.selectedVersionId ? 'Any Version' : 'Version ' + globals.selectedVersion?.name}}
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="onSelectedVersionChanged()">Any Version</button>
+        <button mat-menu-item *ngFor="let version of globals.versions" (click)="onSelectedVersionChanged(version)">
+          {{ version.name }}
+        </button>
+      </mat-menu>
+    </div>
+    <div *ngIf="globals.versions && globals.versions.length == 0">
+      No versions available
+    </div>
+  </span>
+</mat-card>

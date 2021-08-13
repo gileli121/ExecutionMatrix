@@ -1,0 +1,14 @@
+<div class="console-container">
+  <div class="buttons-section">
+    Console
+  </div>
+
+  <div class="console-section" [ngClass]="{
+        'console-section-passed':
+          testExecution?.executionResult === ExecutionResult.passed,
+        'console-section-failed':
+          testExecution?.executionResult === ExecutionResult.failed
+      }">
+    {{consoleText}}
+  </div>
+</div>

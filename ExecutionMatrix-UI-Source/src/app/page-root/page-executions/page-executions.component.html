@@ -1,0 +1,127 @@
+<!--<app-comp-version-selector></app-comp-version-selector>-->
+
+<div>
+  <mat-card class="filters-container">
+    <div class="filters-menu-button-container"
+      *ngIf="availableFilters.length > 0"
+      style="display: inline-block; vertical-align: middle">
+
+      <button mat-icon-button color="primary" [matMenuTriggerFor]="menu">
+        <mat-icon>filter_list</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item *ngFor="let filter of availableFilters" (click)="onAddFilterEvent(filter)">
+          {{ filter.filterName }}
+        </button>
+      </mat-menu>
+    </div>
+
+    <div *ngIf="usedFilters.length > 0" class="filters-container">
+      <div style="display: inline-block">
+        <div *ngFor="let filter of usedFilters" class="filter-root-container">
+
+          <div class="filter-container">
+            <mat-form-field style="width: 130px">
+              <mat-label>{{ filter.filterName }}</mat-label>
+              <mat-select value="{{filter.selectedFilter?.id}}">
+                <mat-option *ngFor="let option of filter.filterOptions" (click)="onSelectFilterValue(filter,option)"
+                            value="{{ option.id }}">
+                  {{ option.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="filter-remove-container">
+            <button mat-icon-button>
+              <mat-icon color="primary" (click)="onRemoveFilterEvent(filter)">remove_circle</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </mat-card>
+
+
+  <mat-card class="tests-view-container">
+    <mat-card-title>Executions</mat-card-title>
+    <ul class="test-items">
+      <li *ngFor="let twe of testsWithExecutions" class="test-row-container">
+        <div *ngIf="shouldShowTestWithExecution(twe)">
+          <div class="test-row test-row-left-content" style="height: 8px">
+
+            <button mat-icon-button (click)="onTestToggleExpand(twe)">
+              <mat-icon> {{!twe.isExpanded ? 'chevron_right' : 'expand_more'}}  </mat-icon>
+            </button>
+          </div>
+          <button mat-button (click)="onTestToggleExpand(twe)" style="display: inline-block"
+                  class="test-row test-row-item"
+                  title="Class: {{twe.testClass?.packageName + '.' + twe.testClass?.className}}}"
+                  [ngClass]="{
+        'test-row-passed':
+          twe.executions[0].executionResult === ExecutionResult.passed,
+        'test-row-failed':
+          twe.executions[0].executionResult === ExecutionResult.failed,
+        'test-row-skipped':
+          twe.executions[0].executionResult === ExecutionResult.skipped,
+        'test-row-unexecuted':
+          twe.executions[0].executionResult === ExecutionResult.unexecuted
+      }">
+            <div class="test-row-name">
+              {{twe.testNameView}} ({{utils.getExecutionResultString(twe.executions[0].executionResult)}})
+            </div>
+          </button>
+          <div style="padding-left: 35px">
+            <button mat-button *ngFor="let ex of twe.executions" (click)="loadTestExecution(ex.id,twe)"
+                    [routerLink]="['/executions']"
+                    [queryParams]="{ testExecution: ex.id}" queryParamsHandling="merge"
+                    class="test-row test-row-item test-sub-row-result" [ngClass]="{
+              'test-row-passed':
+                ex.executionResult === ExecutionResult.passed,
+              'test-row-failed':
+                ex.executionResult === ExecutionResult.failed,
+              'test-row-skipped':
+                ex.executionResult === ExecutionResult.skipped,
+              'test-row-unexecuted':
+                ex.executionResult === ExecutionResult.unexecuted,
+                'test-row-selected': ex.id === selectedExecutionId
+            }" [ngStyle]="{'display': twe.isExpanded ? 'block' : 'none'}">
+              <div class="test-row-info">
+
+                  <span>{{utils.getExecutionResultString(ex.executionResult)}} [Executed on version {{ex.version.name}}, at {{datePipe.transform(ex.executionDate, 'dd/MM/yyyy')}}
+                    ]</span>
+
+
+              </div>
+            </button>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </mat-card>
+
+
+  <mat-card class="test-result-container">
+
+    <mat-card-title *ngIf="selectedExecutionId">{{selectedTest?.testNameView}}</mat-card-title>
+    <mat-card-title class="test-result-message" *ngIf="!selectedExecutionId">Please select an execution</mat-card-title>
+
+    <div class="test-result-tree-container">
+      <app-comp-show-test-execution [testExecutionId]="selectedExecutionId"
+                                    (selectedTestExecResEvent)="onSelectedExecutionResult($event)">
+      </app-comp-show-test-execution>
+    </div>
+
+    <hr>
+
+    <div class="test-result-console-container">
+      <app-comp-execution-console [testExecution]="selectedTestExecutionResult"></app-comp-execution-console>
+    </div>
+
+  </mat-card>
+</div>
+
+
+
+
