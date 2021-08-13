@@ -18,9 +18,11 @@ You will need to build the project on your own
 
 # How to use
 
-## Setup the Report server
+## Install the Report server
+> TODO. For now you will need to build it yourself from the source
 
-> TODO
+## Install the JUnit report extension
+> TODO. For now you will need to build it yourself from the source
 
 ## Setup the JUnit extension & execution configurations
 
