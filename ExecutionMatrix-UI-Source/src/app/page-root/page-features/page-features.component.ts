@@ -46,7 +46,10 @@ export class PageFeaturesComponent implements OnInit {
 
   onRowClicked(featureSummary: FeatureSummary) {
     this.router.navigate(['/executions'], {
-      queryParams: {featureId: featureSummary.id}
+      queryParams: {
+        featureId: featureSummary.id,
+        versionId: this.globals.selectedVersionId ? this.globals.selectedVersionId : null
+      }
     });
   }
 
