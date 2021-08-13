@@ -11,11 +11,6 @@ ExecutionMatrix - Deploy, Host, and view your JUnit report in an external report
 ![image](https://user-images.githubusercontent.com/17680514/129417942-5a8d3c29-20bc-4325-879a-d66354f11b34.png)
 
 
-
-# Installation
-For now, there is no installation method & guide.
-You will need to build the project on your own
-
 # How to use
 
 ## Install the Report server
