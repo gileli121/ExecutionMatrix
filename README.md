@@ -16,6 +16,10 @@ You will need to build the project on your own
 
 # How to use
 
+## Setup the Report server
+
+> TODO
+
 ## Setup the JUnit extension & execution configurations
 
 In order to be able to report from JUnit to the server, you need to use `TestMatrixExtension` JUnit extension class.
@@ -62,4 +66,26 @@ For example:
 ![image](https://user-images.githubusercontent.com/17680514/129415798-de45a64c-1e3f-48d1-927a-66c7c02ff073.png)
 
 
-Next, 
+Next, It is highly recommended to add `@DisplayName` annotation to the class and tests.
+The value in the `@DisplayName` is simplified name that is easier to read.
+The `@DisplayName` is reflected here:
+![image](https://user-images.githubusercontent.com/17680514/129417180-eb3b67a5-980d-48d6-83bb-ee08b7fc5fea.png)
+![image](https://user-images.githubusercontent.com/17680514/129417324-10f37ca2-6fcf-4e43-8d93-8d16522bf1a2.png)
+
+
+# Contribution Guidelines
+
+Please ensure your pull request adheres to the following guidelines:
+
+- Alphabetize your entry.
+- Search previous suggestions before making a new one, as yours may be a duplicate.
+- Suggested READMEs should be beautiful or stand out in some way.
+- Make an individual pull request for each suggestion.
+- New categories, or improvements to the existing categorization are welcome.
+- Keep descriptions short and simple, but descriptive.
+- Start the description with a capital and end with a full stop/period.
+- Check your spelling and grammar.
+- Make sure your text editor is set to remove trailing whitespace.
+- Use the `#readme` anchor for GitHub READMEs to link them directly
+
+Thank you for your suggestions!
