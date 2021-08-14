@@ -3,6 +3,7 @@ package executionmatrix.junit5.extension;
 import executionmatrix.junit5.extension.annotations.TestWithVersion;
 import executionmatrix.junit5.extension.annotations.TestWithVersionEnv;
 import executionmatrix.junit5.extension.internal.ExtensionContextInfo;
+import executionmatrix.junit5.extension.internal.helpers.ConsoleOutputCapturer;
 import executionmatrix.junit5.extension.internal.helpers.ReportClient;
 import executionmatrix.junit5.extension.internal.models.ExecutionResult;
 import executionmatrix.junit5.extension.internal.models.PostExecutionDTO;
@@ -32,6 +33,7 @@ public class ExecutionMatrixExtension implements InvocationInterceptor, BeforeEa
 
     private final HashMap<TestDescriptor, ExtensionContextInfo> contexts = new HashMap<>();
 
+    private ConsoleOutputCapturer outputCapturer;
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
@@ -64,11 +66,17 @@ public class ExecutionMatrixExtension implements InvocationInterceptor, BeforeEa
 
         testClassDTO = new PostTestClassDTO(packageName, className, classDisplayName);
 
+        // Setup the console capture helper
+        outputCapturer = new ConsoleOutputCapturer();
+
     }
 
     @Override
     public void beforeEach(ExtensionContext extensionContext) {
         contexts.clear();
+
+        // This call is just to be safe that we cleaned the previous captured console
+        outputCapturer.stop();
     }
 
 
@@ -128,36 +136,51 @@ public class ExecutionMatrixExtension implements InvocationInterceptor, BeforeEa
     @Override
     public void interceptTestMethod(Invocation<Void> invocation, ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
         ExtensionContextInfo contextInfo = listExtensionContext(extensionContext);
+        outputCapturer.start();
         try {
             InvocationInterceptor.super.interceptTestMethod(invocation, invocationContext, extensionContext);
         } catch (Throwable e) {
             if (contextInfo != null)
                 contextInfo.setException(e);
             throw e;
+        } finally {
+            String consoleOutput = outputCapturer.stop();
+            if (contextInfo != null)
+                contextInfo.setConsoleOutput(consoleOutput);
         }
     }
 
     @Override
     public <T> T interceptTestFactoryMethod(Invocation<T> invocation, ReflectiveInvocationContext<Method> invocationContext, ExtensionContext extensionContext) throws Throwable {
         ExtensionContextInfo contextInfo = listExtensionContext(extensionContext);
+        outputCapturer.start();
         try {
             return InvocationInterceptor.super.interceptTestFactoryMethod(invocation, invocationContext, extensionContext);
         } catch (Throwable e) {
             if (contextInfo != null)
                 contextInfo.setException(e);
             throw e;
+        } finally {
+            String consoleOutput = outputCapturer.stop();
+            if (contextInfo != null)
+                contextInfo.setConsoleOutput(consoleOutput);
         }
     }
 
     @Override
     public void interceptDynamicTest(Invocation<Void> invocation, ExtensionContext extensionContext) throws Throwable {
         ExtensionContextInfo contextInfo = listExtensionContext(extensionContext);
+        outputCapturer.start();
         try {
             InvocationInterceptor.super.interceptDynamicTest(invocation, extensionContext);
         } catch (Throwable e) {
             if (contextInfo != null)
                 contextInfo.setException(e);
             throw e;
+        } finally {
+            String consoleOutput = outputCapturer.stop();
+            if (contextInfo != null)
+                contextInfo.setConsoleOutput(consoleOutput);
         }
     }
 

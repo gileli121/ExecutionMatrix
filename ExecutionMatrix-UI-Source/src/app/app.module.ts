@@ -29,6 +29,7 @@ import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatButtonModule} from "@angular/material/button";
 import {MatCardModule} from "@angular/material/card";
 import {MatMenuModule} from "@angular/material/menu";
+import {MatDividerModule} from "@angular/material/divider";
 
 @NgModule({
   declarations: [
@@ -44,28 +45,29 @@ import {MatMenuModule} from "@angular/material/menu";
     CompPageMessageComponent,
     CompPercentageCircleComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ToastrModule.forRoot({
-      positionClass: 'toast-bottom-right',
-    }),
-    BsDropdownModule.forRoot(),
-    CollapseModule.forRoot(),
-    NgxResizableModule,
-    MatSelectModule,
-    MatTableModule,
-    NgCircleProgressModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatCardModule,
-    MatMenuModule,
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        HttpClientModule,
+        FormsModule,
+        ReactiveFormsModule,
+        ToastrModule.forRoot({
+            positionClass: 'toast-bottom-right',
+        }),
+        BsDropdownModule.forRoot(),
+        CollapseModule.forRoot(),
+        NgxResizableModule,
+        MatSelectModule,
+        MatTableModule,
+        NgCircleProgressModule,
+        MatIconModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatCardModule,
+        MatMenuModule,
+        MatDividerModule,
+    ],
   providers: [
     HttpClient,
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

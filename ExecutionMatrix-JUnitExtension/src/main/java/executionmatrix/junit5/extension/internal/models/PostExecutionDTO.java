@@ -20,6 +20,8 @@ public class PostExecutionDTO {
 
     private transient PostExecutionDTO parent;
 
+    private static final String EOL = System.lineSeparator();
+
     public PostExecutionDTO() {
     }
 
@@ -29,30 +31,50 @@ public class PostExecutionDTO {
         testMethodName = testDescriptor.getLegacyReportingName();
         testDisplayName = testDescriptor.getDisplayName();
 
-        if (contextInfo != null && contextInfo.getException() != null) {
-            Throwable exception = contextInfo.getException();
-            if (exception instanceof AssertionError)
-                result = ExecutionResult.Failed;
-            else
-                result = ExecutionResult.Fatal;
 
-            if (parent != null) {
-                PostExecutionDTO current = parent;
-                while (current != null) {
+        if (contextInfo != null) {
 
-                    if (current.result != ExecutionResult.Failed && current.result != ExecutionResult.Fatal) {
-                        current.result = result;
-                    } else if (current.result == ExecutionResult.Fatal)
-                        result = current.result;
+            if (contextInfo.getConsoleOutput() != null)
+                output = contextInfo.getConsoleOutput();
 
-                    current = current.parent;
+            if (contextInfo.getException() != null) {
+                Throwable exception = contextInfo.getException();
+                if (exception instanceof AssertionError)
+                    result = ExecutionResult.Failed;
+                else
+                    result = ExecutionResult.Fatal;
+
+                if (parent != null) {
+                    PostExecutionDTO current = parent;
+                    while (current != null) {
+
+                        if (current.result != ExecutionResult.Failed && current.result != ExecutionResult.Fatal)
+                            current.result = result;
+                        else if (current.result == ExecutionResult.Fatal)
+                            result = current.result;
+                        else
+                            current.result = result;
+
+                        current = current.parent;
+                    }
                 }
+
+                if (output == null)
+                    output = "";
+
+                output += exception.getClass().getName();
+                if (exception.getMessage() != null)
+                    output += ":" + EOL + "\t" + exception.getMessage();
+
+                output += EOL;
+
+            } else {
+                result = ExecutionResult.Passed;
             }
 
-            output = exception.getMessage();
-        } else {
-            result = ExecutionResult.Passed;
+
         }
+
 
         if (testDescriptor.getChildren() != null && testDescriptor.getChildren().size() > 0) {
             childExecutions = new ArrayList<>();
@@ -94,6 +116,9 @@ public class PostExecutionDTO {
         this.result = executionResult;
     }
 
+    private String getOptimizedName() {
+        return testDisplayName != null ? testDisplayName + " ("+testMethodName+")" : testMethodName;
+    }
 
     public String getTestMethodName() {
         return testMethodName;

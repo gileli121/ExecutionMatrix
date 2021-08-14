@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 public class ExtensionContextInfo {
     private final ExtensionContext context;
     private Throwable exception;
+    private String consoleOutput = null;
 
     public ExtensionContextInfo(ExtensionContext context) {
         this.context = context;
@@ -25,5 +26,13 @@ public class ExtensionContextInfo {
 
     public void setException(Throwable exception) {
         this.exception = exception;
+    }
+
+    public void setConsoleOutput(String consoleOutput) {
+        this.consoleOutput = consoleOutput;
+    }
+
+    public String getConsoleOutput() {
+        return consoleOutput;
     }
 }

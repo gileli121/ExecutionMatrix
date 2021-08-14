@@ -7,7 +7,6 @@ using ExecutionMatrix.App.Controllers.Base;
 using ExecutionMatrix.App.Controllers.DTOs;
 using ExecutionMatrix.App.Database;
 using ExecutionMatrix.App.Database.Tables;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

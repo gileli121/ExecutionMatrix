@@ -11,6 +11,17 @@
         'console-section-fatal':
         testExecution?.executionResult === ExecutionResult.fatal
       }">
-    {{consoleText}}
+    <div style="position: relative; margin-right: 10px">
+      <div *ngFor="let execution of testExecutions; let i = index">
+        <div>
+          <div *ngIf="i > 0">
+            <br>
+            <mat-divider ></mat-divider>
+          </div>
+          <div class="console-child-test-title">Test: {{execution.testNameView}}</div>
+        </div>
+        <div>{{execution.executionOutput}}</div>
+      </div>
+    </div>
   </div>
 </div>
