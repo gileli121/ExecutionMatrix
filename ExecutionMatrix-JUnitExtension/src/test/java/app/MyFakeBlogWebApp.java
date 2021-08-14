@@ -1,4 +1,4 @@
-package helpers.pages;
+package app;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +40,6 @@ public class MyFakeBlogWebApp {
 
     public void login(String username, String password) {
 
-        username = "user1";
-        password = "1234";
         if (loginAttempts >= MAX_LOGIN_ATTEMPTS)
             throw new RuntimeException("Maximum login attempts limit reached!");
         for (User user : users) {

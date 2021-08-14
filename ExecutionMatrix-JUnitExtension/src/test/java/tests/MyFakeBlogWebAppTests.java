@@ -2,7 +2,7 @@ package tests;
 
 import executionmatrix.junit5.extension.ExecutionMatrixExtension;
 import executionmatrix.junit5.extension.annotations.TestWithVersionEnv;
-import helpers.pages.MyFakeBlogWebApp;
+import app.MyFakeBlogWebApp;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
