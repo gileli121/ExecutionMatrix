@@ -1,6 +1,6 @@
 package tests;
 
-import executionmatrix.junit5.extension.TestMatrixExtension;
+import executionmatrix.junit5.extension.ExecutionMatrixExtension;
 import executionmatrix.junit5.extension.annotations.TestWithVersionEnv;
 import helpers.pages.MyFakeBlogWebApp;
 import org.junit.jupiter.api.*;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-@ExtendWith(TestMatrixExtension.class)
+@ExtendWith(ExecutionMatrixExtension.class)
 @TestWithVersionEnv("TARGET_BUILD_VERSION")
 @DisplayName("Sanity Tests")
 @Tag("BasicUserFunctionality")

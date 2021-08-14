@@ -20,7 +20,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
-public class TestMatrixExtension implements InvocationInterceptor, BeforeEachCallback, AfterEachCallback,
+public class ExecutionMatrixExtension implements InvocationInterceptor, BeforeEachCallback, AfterEachCallback,
         BeforeAllCallback {
 
     private static final String REPORTS_SERVER_API = System.getenv("REPORTS_SERVER_ADDRESS"); // Example value: http://localhost:49689
