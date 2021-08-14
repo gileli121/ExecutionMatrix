@@ -2,7 +2,6 @@ package app;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class MyFakeBlogWebApp {
 
@@ -89,7 +88,7 @@ public class MyFakeBlogWebApp {
         if (blogContent.isBlank())
             throw new RuntimeException("Invalid blog content provided");
 
-//        blogs.add(new Blog(blogTitle,blogContent));
+        blogs.add(new Blog(blogTitle,blogContent));
 
     }
 
