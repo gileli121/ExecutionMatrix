@@ -5,6 +5,7 @@
         Passed,
         Failed,
         Skipped,
-        UnExecuted
+        UnExecuted,
+        Fatal
     }
 }

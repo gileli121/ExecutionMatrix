@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ExecutionResult} from "../models/execution-result";
 
 @Injectable({
@@ -15,6 +15,8 @@ export class UtilsService {
         return 'Passed';
       case ExecutionResult.failed:
         return 'Failed';
+      case ExecutionResult.fatal:
+        return 'Fatal';
       case ExecutionResult.skipped:
         return 'Skipped';
       case ExecutionResult.unexecuted:

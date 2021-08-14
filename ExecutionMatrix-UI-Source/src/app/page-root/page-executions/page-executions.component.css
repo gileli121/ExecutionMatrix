@@ -69,15 +69,11 @@
 }
 
 .test-row-failed {
+  border-left: 4px solid #f3b087;
+}
+
+.test-row-fatal {
   border-left: 4px solid #f38787;
-}
-
-.test-row-passed:hover {
-  /*background-color: rgba(154, 205, 50, 0.6);*/
-}
-
-.test-row-failed:hover {
-  /*background-color: rgba(255, 0, 0, 0.6);*/
 }
 
 .test-row-unexecuted {

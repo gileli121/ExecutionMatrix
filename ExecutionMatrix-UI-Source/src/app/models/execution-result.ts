@@ -2,5 +2,6 @@ export enum ExecutionResult {
   passed,
   failed,
   skipped,
-  unexecuted
+  unexecuted,
+  fatal
 }

@@ -3,8 +3,8 @@
 <div>
   <mat-card class="filters-container">
     <div class="filters-menu-button-container"
-      *ngIf="availableFilters.length > 0"
-      style="display: inline-block; vertical-align: middle">
+         *ngIf="availableFilters.length > 0"
+         style="display: inline-block; vertical-align: middle">
 
       <button mat-icon-button color="primary" [matMenuTriggerFor]="menu">
         <mat-icon>filter_list</mat-icon>
@@ -63,6 +63,8 @@
           twe.executions[0].executionResult === ExecutionResult.passed,
         'test-row-failed':
           twe.executions[0].executionResult === ExecutionResult.failed,
+        'test-row-fatal':
+          twe.executions[0].executionResult === ExecutionResult.fatal,
         'test-row-skipped':
           twe.executions[0].executionResult === ExecutionResult.skipped,
         'test-row-unexecuted':
@@ -81,6 +83,8 @@
                 ex.executionResult === ExecutionResult.passed,
               'test-row-failed':
                 ex.executionResult === ExecutionResult.failed,
+                'test-row-fatal':
+               ex.executionResult === ExecutionResult.fatal,
               'test-row-skipped':
                 ex.executionResult === ExecutionResult.skipped,
               'test-row-unexecuted':
