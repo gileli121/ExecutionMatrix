@@ -12,6 +12,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.extension.*;
@@ -109,7 +110,8 @@ public class ExecutionMatrixExtension implements InvocationInterceptor, BeforeEa
             int responseCode = response.getStatusLine().getStatusCode();
             if (responseCode != 200) {
                 log.error("Failed to report this execution to ExecutionMatrix server. Reason: The request to submit the " +
-                        "execution ended with response code " + responseCode);
+                        "execution ended with response code " + responseCode + EOL +
+                        "Response body: " + EntityUtils.toString(response.getEntity(), "UTF-8"));
             }
 
 
