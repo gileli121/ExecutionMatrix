@@ -28,6 +28,7 @@ public class BasicTestsExample {
     @DisplayName("Test valid login")
     @Tag("Login")
     public void testValidLogin() {
+        System.out.println("Testing a valid login scenario ...");
         app.login("user1","1234");
         assertTrue(app.isLoggedIn(),"Failed to log in");
     }
@@ -36,6 +37,7 @@ public class BasicTestsExample {
     @DisplayName("Test login with wrong password")
     @Tag("Login")
     public void testLoginWithWrongPassword() {
+        System.out.println("Testing login with wrong password scenario ...");
         app.login("user1","wrongPassword");
         assertFalse(app.isLoggedIn(),"Expected the login to fail but it passed instead");
     }
@@ -44,6 +46,7 @@ public class BasicTestsExample {
     @DisplayName("Test multiple failed login attempts")
     @Tag("Login")
     public void testMultipleFailedLoginAttempts() {
+        System.out.println("Testing multiple failed login attempts ...");
         for (int attempt = 1; attempt <= 10; attempt++)
             app.login("invalidUser","invalidPassword");
 
@@ -55,6 +58,7 @@ public class BasicTestsExample {
     @DisplayName("Test register new user")
     @Tag("Register")
     public void testRegisterNewUser() {
+        System.out.println("Testing register new user ...");
         app.register("newUser","1234");
         app.login("newUser","1234");
         assertTrue(app.isLoggedIn(),"Can't validate the register flow. " +
@@ -65,6 +69,7 @@ public class BasicTestsExample {
     @DisplayName("Test register existing user")
     @Tag("Register")
     public void testRegisterExistingUser() {
+        System.out.println("Testing register existing user ...");
         app.register("newUser","1234");
         app.login("newUser","1234");
         assertTrue(app.isLoggedIn(),"Can't validate the register flow. " +
