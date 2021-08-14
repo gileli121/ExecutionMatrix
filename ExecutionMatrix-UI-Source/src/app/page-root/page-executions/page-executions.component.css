@@ -89,7 +89,7 @@
 }
 
 .test-row-skipped {
-  background-color: darkgray;
+  background-color: rgb(200, 200, 200);
 }
 
 .test-sub-row-result {

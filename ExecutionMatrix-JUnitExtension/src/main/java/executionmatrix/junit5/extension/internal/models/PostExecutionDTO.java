@@ -62,6 +62,7 @@ public class PostExecutionDTO {
 
     }
 
+    // This constructor is used for test that executed
     public PostExecutionDTO(HashMap<TestDescriptor, ExtensionContextInfo> contextHashMap, TestDescriptor testDescriptor, PostTestClassDTO testClass, String versionName) {
         this(contextHashMap, testDescriptor, (PostExecutionDTO) null);
         this.testClass = testClass;
@@ -74,6 +75,23 @@ public class PostExecutionDTO {
 
         }
         this.versionName = versionName;
+    }
+
+    // This constructor is used for unexecuted test like disabled test
+    public PostExecutionDTO(PostTestClassDTO testClass, String versionName, TestDescriptor testDescriptor, ExecutionResult executionResult) {
+        this.testClass = testClass;
+        this.versionName = versionName;
+        this.testMethodName = testDescriptor.getLegacyReportingName();
+        this.testDisplayName = testDescriptor.getDisplayName();
+
+        Set<TestTag> tagsSet = testDescriptor.getTags();
+        if (tagsSet != null && tagsSet.size() > 0) {
+            featureNames = new ArrayList<>();
+            for (TestTag tag : tagsSet)
+                featureNames.add(Utils.splitCamelCase(tag.getName()));
+        }
+
+        this.result = executionResult;
     }
 
 

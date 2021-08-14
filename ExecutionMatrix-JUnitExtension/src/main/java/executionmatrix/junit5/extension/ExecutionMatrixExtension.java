@@ -1,21 +1,18 @@
 package executionmatrix.junit5.extension;
 
-import com.google.gson.Gson;
 import executionmatrix.junit5.extension.annotations.TestWithVersion;
 import executionmatrix.junit5.extension.annotations.TestWithVersionEnv;
 import executionmatrix.junit5.extension.internal.ExtensionContextInfo;
+import executionmatrix.junit5.extension.internal.helpers.ReportClient;
+import executionmatrix.junit5.extension.internal.models.ExecutionResult;
 import executionmatrix.junit5.extension.internal.models.PostExecutionDTO;
 import executionmatrix.junit5.extension.internal.models.PostTestClassDTO;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.extension.*;
+import org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor;
 import org.junit.platform.engine.TestDescriptor;
 
 
@@ -24,19 +21,17 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 
 public class ExecutionMatrixExtension implements InvocationInterceptor, BeforeEachCallback, AfterEachCallback,
-        BeforeAllCallback {
+        BeforeAllCallback, AfterAllCallback {
 
     private static final Logger log = LogManager.getLogger(ExecutionMatrixExtension.class);
-    private static final String EOL = System.lineSeparator();
 
-    private static final String REPORTS_SERVER_ADDRESS = System.getenv("REPORTS_SERVER_ADDRESS"); // Example value: http://localhost:49689
+
     private PostTestClassDTO testClassDTO = null;
 
     private String versionName = "v0.0.0";
 
     private final HashMap<TestDescriptor, ExtensionContextInfo> contexts = new HashMap<>();
 
-    private final Gson GSON = new Gson();
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
@@ -72,7 +67,7 @@ public class ExecutionMatrixExtension implements InvocationInterceptor, BeforeEa
     }
 
     @Override
-    public void beforeEach(ExtensionContext extensionContext) throws Exception {
+    public void beforeEach(ExtensionContext extensionContext) {
         contexts.clear();
     }
 
@@ -81,43 +76,52 @@ public class ExecutionMatrixExtension implements InvocationInterceptor, BeforeEa
     public void afterEach(ExtensionContext extensionContext) throws Exception {
         // here we will submit the execution result to the server
 
-        if (REPORTS_SERVER_ADDRESS == null) {
-            log.error("Skipping reporting to ExecutionMatrix server because the environment variable REPORTS_SERVER_ADDRESS is undefined." + EOL
-                    + "Please define this variable first. Example value: http://localhost:49689");
-            return;
-        }
-
         TestDescriptor testDescriptor = getTestDescriptor(extensionContext);
         if (testDescriptor == null) {
-            log.error("Failed to report this execution to ExecutionMatrix server. Reason: Failed to get TestDescriptor " +
+            log.error("Failed to prepare the execution report. Reason: Failed to get TestDescriptor " +
                     "instance for the current execution");
             return;
         }
 
-        PostExecutionDTO executionResult = new PostExecutionDTO(contexts, testDescriptor, testClassDTO, versionName);
-        String executionResultJson = GSON.toJson(executionResult);
+        PostExecutionDTO executionDTO = new PostExecutionDTO(contexts, testDescriptor, testClassDTO, versionName);
 
+        ReportClient reportClient = new ReportClient();
+        if (!reportClient.reportExecution(executionDTO))
+            log.error("Failed to report the execution to the server, See the reason below.");
+    }
 
-        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            HttpPost request = new HttpPost(REPORTS_SERVER_ADDRESS + "/api/ReportExtension/SubmitExecution");
-            StringEntity params = new StringEntity(executionResultJson);
-            request.addHeader("content-type", "application/json");
-            request.setEntity(params);
+    @Override
+    public void afterAll(ExtensionContext extensionContext) throws Exception {
+        // Here we will find any disabled tests that was not executed and report them also
+        TestDescriptor rootTestDescriptor = getTestDescriptor(extensionContext);
+        if (rootTestDescriptor == null) {
+            log.warn("Failed to look for disabled tests. Reason: Can't Get rootTestDescriptor");
+            return;
+        }
 
+        if (rootTestDescriptor.getChildren() == null) {
+            log.warn("Failed to look for disabled tests. Reason: Can't find any tests from rootTestDescriptor");
+            return;
+        }
 
-            HttpResponse response = httpClient.execute(request);
+        ReportClient reportClient = new ReportClient();
 
-            int responseCode = response.getStatusLine().getStatusCode();
-            if (responseCode != 200) {
-                log.error("Failed to report this execution to ExecutionMatrix server. Reason: The request to submit the " +
-                        "execution ended with response code " + responseCode + EOL +
-                        "Response body: " + EntityUtils.toString(response.getEntity(), "UTF-8"));
-            }
+        for (TestDescriptor childTest : rootTestDescriptor.getChildren()) {
+            if (contexts.containsKey(childTest)) continue;
+            if (!(childTest instanceof TestMethodTestDescriptor)) continue;
 
+            TestMethodTestDescriptor methodTestDescriptor = (TestMethodTestDescriptor) childTest;
 
-        } catch (Exception ex) {
-            log.error("Failed to report this execution to ExecutionMatrix server." + EOL +
-                    "Reason: An unknown error has occurred, Error message: " + ex.getMessage());
+            Method testMethod = methodTestDescriptor.getTestMethod();
+            if (testMethod.getAnnotation(Disabled.class) == null) continue;
+
+            // We found disabled test here, prepare the report structure
+            PostExecutionDTO executionDTO = new PostExecutionDTO(testClassDTO, versionName, childTest, ExecutionResult.Skipped);
+
+            // Submit the report
+            if (!reportClient.reportExecution(executionDTO))
+                log.error("Failed to report disabled test, See the reason below");
+
         }
     }
 
@@ -178,4 +182,6 @@ public class ExecutionMatrixExtension implements InvocationInterceptor, BeforeEa
         contexts.put(testDescriptor, extensionContextInfo);
         return extensionContextInfo;
     }
+
+
 }

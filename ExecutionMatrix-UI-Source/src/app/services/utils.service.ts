@@ -18,7 +18,7 @@ export class UtilsService {
       case ExecutionResult.fatal:
         return 'Fatal';
       case ExecutionResult.skipped:
-        return 'Skipped';
+        return 'Skipped/Disabled';
       case ExecutionResult.unexecuted:
         return 'Un Executed';
     }
