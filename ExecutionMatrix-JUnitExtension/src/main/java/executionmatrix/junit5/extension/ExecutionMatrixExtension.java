@@ -12,6 +12,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.engine.TestDescriptor;
 
@@ -23,6 +25,9 @@ import java.util.HashMap;
 public class ExecutionMatrixExtension implements InvocationInterceptor, BeforeEachCallback, AfterEachCallback,
         BeforeAllCallback {
 
+    private static final Logger log = LogManager.getLogger(ExecutionMatrixExtension.class);
+    private static final String EOL = System.lineSeparator();
+
     private static final String REPORTS_SERVER_API = System.getenv("REPORTS_SERVER_ADDRESS"); // Example value: http://localhost:49689
     private PostTestClassDTO testClassDTO = null;
 
@@ -31,7 +36,6 @@ public class ExecutionMatrixExtension implements InvocationInterceptor, BeforeEa
     private final HashMap<TestDescriptor, ExtensionContextInfo> contexts = new HashMap<>();
 
     private final Gson GSON = new Gson();
-
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
@@ -77,12 +81,15 @@ public class ExecutionMatrixExtension implements InvocationInterceptor, BeforeEa
         // here we will submit the execution result to the server
 
         if (REPORTS_SERVER_API == null) {
-            // TODO: Log here error that the REPORTS_SERVER_API is undefined so we can't submit the report
+            log.error("Skipping reporting to ExecutionMatrix server because the environment variable REPORTS_SERVER_API is undefined." + EOL
+                    + "Please define this variable first. Example value: http://localhost:49689");
             return;
         }
+
         TestDescriptor testDescriptor = getTestDescriptor(extensionContext);
         if (testDescriptor == null) {
-            // TODO: Log here error that we failed to reed the test information
+            log.error("Failed to report this execution to ExecutionMatrix server. Reason: Failed to get TestDescriptor " +
+                    "instance for the current execution");
             return;
         }
 
@@ -97,12 +104,18 @@ public class ExecutionMatrixExtension implements InvocationInterceptor, BeforeEa
             request.setEntity(params);
 
 
-            HttpResponse res = httpClient.execute(request);
-            // TODO: Add logic here to handle the response and warn the user in case of error
+            HttpResponse response = httpClient.execute(request);
+
+            int responseCode = response.getStatusLine().getStatusCode();
+            if (responseCode != 200) {
+                log.error("Failed to report this execution to ExecutionMatrix server. Reason: The request to submit the " +
+                        "execution ended with response code " + responseCode);
+            }
 
 
         } catch (Exception ex) {
-            // TODO: Log here error that there was an unknown error while submitting the report
+            log.error("Failed to report this execution to ExecutionMatrix server." + EOL +
+                    "Reason: An unknown error has occurred, Error message: " + ex.getMessage());
         }
     }
 
@@ -149,7 +162,7 @@ public class ExecutionMatrixExtension implements InvocationInterceptor, BeforeEa
             privateStringField.setAccessible(true);
             return (TestDescriptor) privateStringField.get(context);
         } catch (Throwable e) {
-            // TODO: log here error
+            log.error("Failed to get TestDescriptor instance");
             return null;
         }
     }
