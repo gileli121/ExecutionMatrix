@@ -1,5 +1,5 @@
 # ExecutionMatrix
-ExecutionMatrix - Deploy, Host, and view your JUnit report in an external reporting tool
+ExecutionMatrix - Deploy, Host, and view your JUnit 5 tests reports in an external reporting tool
 
 
 # Screenshots
