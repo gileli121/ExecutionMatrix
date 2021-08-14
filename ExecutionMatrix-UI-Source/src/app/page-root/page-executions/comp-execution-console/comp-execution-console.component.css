@@ -37,10 +37,14 @@
 }
 
 .console-section-passed {
-  background-color: rgba(201, 234, 202, 0.5);
+  background-color: rgba(201, 234, 202, 0.3);
 }
 
 .console-section-failed {
-  background-color: rgba(234, 143, 136, 0.5);
+  background-color: rgba(234, 200, 136, 0.3);
+}
+
+.console-section-fatal {
+  background-color: rgba(234, 143, 136, 0.3);
 }
 

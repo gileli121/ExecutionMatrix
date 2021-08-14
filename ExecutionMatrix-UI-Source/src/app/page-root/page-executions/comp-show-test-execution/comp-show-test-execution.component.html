@@ -19,6 +19,8 @@
           item.executionResult === ExecutionResult.passed,
         'test-row-failed':
           item.executionResult === ExecutionResult.failed,
+        'test-row-fatal':
+               item.executionResult === ExecutionResult.fatal,
         'test-row-skipped':
           item.executionResult === ExecutionResult.skipped,
         'test-row-unexecuted': item.executionResult === ExecutionResult.unexecuted,

@@ -7,7 +7,9 @@
         'console-section-passed':
           testExecution?.executionResult === ExecutionResult.passed,
         'console-section-failed':
-          testExecution?.executionResult === ExecutionResult.failed
+        testExecution?.executionResult === ExecutionResult.failed,
+        'console-section-fatal':
+        testExecution?.executionResult === ExecutionResult.fatal
       }">
     {{consoleText}}
   </div>
