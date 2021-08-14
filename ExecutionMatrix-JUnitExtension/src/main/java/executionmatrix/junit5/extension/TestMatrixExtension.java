@@ -16,15 +16,14 @@ import org.junit.jupiter.api.extension.*;
 import org.junit.platform.engine.TestDescriptor;
 
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.HashMap;
 
 public class TestMatrixExtension implements InvocationInterceptor, BeforeEachCallback, AfterEachCallback,
         BeforeAllCallback {
 
+    private static final String REPORTS_SERVER_API = System.getenv("REPORTS_SERVER_ADDRESS"); // Example value: http://localhost:49689
     private PostTestClassDTO testClassDTO = null;
 
     private String versionName = "v0.0.0";
@@ -77,6 +76,10 @@ public class TestMatrixExtension implements InvocationInterceptor, BeforeEachCal
     public void afterEach(ExtensionContext extensionContext) throws Exception {
         // here we will submit the execution result to the server
 
+        if (REPORTS_SERVER_API == null) {
+            // TODO: Log here error that the REPORTS_SERVER_API is undefined so we can't submit the report
+            return;
+        }
         TestDescriptor testDescriptor = getTestDescriptor(extensionContext);
         if (testDescriptor == null) {
             // TODO: Log here error that we failed to reed the test information
@@ -88,15 +91,18 @@ public class TestMatrixExtension implements InvocationInterceptor, BeforeEachCal
 
 
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            HttpPost request = new HttpPost("http://localhost:49689/api/ReportExtension/SubmitExecution");
+            HttpPost request = new HttpPost(REPORTS_SERVER_API + "/api/ReportExtension/SubmitExecution");
             StringEntity params = new StringEntity(executionResultJson);
             request.addHeader("content-type", "application/json");
             request.setEntity(params);
 
-            // TODO: Add logic here to handle the response and warn the user in case of error
+
             HttpResponse res = httpClient.execute(request);
+            // TODO: Add logic here to handle the response and warn the user in case of error
+
+
         } catch (Exception ex) {
-            // handle exception here
+            // TODO: Log here error that there was an unknown error while submitting the report
         }
     }
 
