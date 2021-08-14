@@ -21,11 +21,11 @@ ExecutionMatrix - Deploy, Host, and view your JUnit report in an external report
 
 ## Setup the JUnit extension & execution configurations
 
-In order to be able to report from JUnit to the server, you need to use the `TestMatrixExtension` JUnit extension class.
+In order to be able to report from JUnit to the server, you need to use the `ExecutionMatrixExtension` JUnit extension class.
 Add the following annotation above the test class
 
 ```java
-@ExtendWith(TestMatrixExtension.class)
+@ExtendWith(ExecutionMatrixExtension.class)
 ...
 public class MyFakeBlogWebAppTests {
 ```
@@ -42,7 +42,7 @@ so the new reports will be under the new version.
 
 
 ```java
-@ExtendWith(TestMatrixExtension.class)
+@ExtendWith(ExecutionMatrixExtension.class)
 @TestWithVersionEnv("TARGET_BUILD_VERSION")
 ...
 public class MyFakeBlogWebAppTests {
@@ -77,7 +77,7 @@ The `@DisplayName` is reflected here:
 ```java
 package tests;
 
-import executionmatrix.junit5.extension.TestMatrixExtension;
+import executionmatrix.junit5.extension.ExecutionMatrixExtension;
 import executionmatrix.junit5.extension.annotations.TestWithVersionEnv;
 import helpers.pages.MyFakeBlogWebApp;
 import org.junit.jupiter.api.*;
@@ -90,7 +90,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-@ExtendWith(TestMatrixExtension.class)
+@ExtendWith(ExecutionMatrixExtension.class)
 @TestWithVersionEnv("TARGET_BUILD_VERSION")
 @DisplayName("Sanity Tests")
 @Tag("BasicUserFunctionality")
