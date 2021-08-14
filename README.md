@@ -74,12 +74,13 @@ The `@DisplayName` is reflected here:
 
 ### Full example of test class
 
+#### @TestFactory Example
 ```java
 package tests;
 
 import executionmatrix.junit5.extension.ExecutionMatrixExtension;
 import executionmatrix.junit5.extension.annotations.TestWithVersionEnv;
-import helpers.pages.MyFakeBlogWebApp;
+import app.MyFakeBlogWebApp;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -94,7 +95,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 @TestWithVersionEnv("TARGET_BUILD_VERSION")
 @DisplayName("Sanity Tests")
 @Tag("BasicUserFunctionality")
-public class MyFakeBlogWebAppTests {
+public class DynamicTestsExample {
 
     @TestFactory
     @DisplayName("Login Tests")
@@ -196,9 +197,206 @@ public class MyFakeBlogWebAppTests {
 
 }
 
+```
+
+#### Basic Examples
+
+```java
+package tests;
+
+import app.MyFakeBlogWebApp;
+import executionmatrix.junit5.extension.ExecutionMatrixExtension;
+import executionmatrix.junit5.extension.annotations.TestWithVersionEnv;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(ExecutionMatrixExtension.class)
+@DisplayName("Basic Tests Example")
+@Tag("Account")
+@TestWithVersionEnv("TARGET_BUILD_VERSION")
+public class BasicTestsExample {
+
+    private MyFakeBlogWebApp app;
+
+    @BeforeEach
+    public void beforeEach() {
+        app = new MyFakeBlogWebApp();
+    }
+
+    @Test
+    @DisplayName("Test valid login")
+    @Tag("Login")
+    public void testValidLogin() {
+        app.login("user1","1234");
+        assertTrue(app.isLoggedIn(),"Failed to log in");
+    }
+
+    @Test
+    @DisplayName("Test login with wrong password")
+    @Tag("Login")
+    public void testLoginWithWrongPassword() {
+        app.login("user1","wrongPassword");
+        assertFalse(app.isLoggedIn(),"Expected the login to fail but it passed instead");
+    }
+
+    @Test
+    @DisplayName("Test multiple failed login attempts")
+    @Tag("Login")
+    public void testMultipleFailedLoginAttempts() {
+        for (int attempt = 1; attempt <= 10; attempt++)
+            app.login("invalidUser","invalidPassword");
+
+        assertThrows(RuntimeException.class,() -> app.login("invalidUser",
+                "invalidPassword"),"The app did not blocked attempt number 11 to login");
+    }
+
+    @Test
+    @DisplayName("Test register new user")
+    @Tag("Register")
+    public void testRegisterNewUser() {
+        app.register("newUser","1234");
+        app.login("newUser","1234");
+        assertTrue(app.isLoggedIn(),"Can't validate the register flow. " +
+                "Failed to login to the registered account");
+    }
+
+    @Test
+    @DisplayName("Test register existing user")
+    @Tag("Register")
+    public void testRegisterExistingUser() {
+        app.register("newUser","1234");
+        app.login("newUser","1234");
+        assertTrue(app.isLoggedIn(),"Can't validate the register flow. " +
+                "Failed to login to the registered account");
+        app.logOut();
+        assertFalse(app.isLoggedIn(),"Failed to log out after first register attempt");
+
+        assertThrows(RuntimeException.class, () -> app.register("newUser","12345"),
+                "Expected the register to failed after second attempt to register the same " +
+                        "account. But instead the account is registered again");
+
+    }
+
+}
 
 ```
 
+
+####
+Dummy App 
+
+```java
+package app;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+public class MyFakeBlogWebApp {
+
+
+    static class User {
+        private final String username;
+        private final String password;
+        public User(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+    }
+
+    static class Blog {
+        private final String blogTitle;
+        private final String blogContent;
+
+        public Blog(String blogTitle, String blogContent) {
+            this.blogTitle = blogTitle;
+            this.blogContent = blogContent;
+        }
+    }
+
+    private static final int MAX_LOGIN_ATTEMPTS = 10;
+    private List<User> users = new ArrayList<>();
+    private List<Blog> blogs = new ArrayList<>();
+    private User currentUser = null;
+    private int loginAttempts = 0;
+    private int registerAttempts = 0;
+
+    public MyFakeBlogWebApp() {
+        users.add(new User("user1", "1234"));
+    }
+
+
+    public void login(String username, String password) {
+
+        if (loginAttempts >= MAX_LOGIN_ATTEMPTS)
+            throw new RuntimeException("Maximum login attempts limit reached!");
+        for (User user : users) {
+            if (username.equals(user.username) && password.equals(user.password)) {
+                currentUser = user;
+                loginAttempts = 0;
+                return;
+            }
+        }
+
+        loginAttempts++;
+    }
+
+    public boolean isLoggedIn() {
+        return currentUser != null;
+    }
+
+    public void logOut() {
+        currentUser = null;
+    }
+
+    public void register(String username, String password) {
+
+        registerAttempts++;
+
+        if (username.isBlank())
+            throw new RuntimeException("The username field can't be empty");
+
+        if (password.isBlank())
+            throw new RuntimeException("The password field can't be empty");
+
+        for (User user : users) {
+            if (user.username.equals(username))
+                throw new RuntimeException("Username already exists!");
+        }
+        users.add(new User(username, password));
+
+        registerAttempts = 0;
+    }
+
+
+
+    public void postBlog(String blogTitle, String blogContent) {
+        if (blogTitle.isBlank())
+            throw new RuntimeException("Invalid blog title provided");
+
+        if (blogContent.isBlank())
+            throw new RuntimeException("Invalid blog content provided");
+
+//        blogs.add(new Blog(blogTitle,blogContent));
+
+    }
+
+    public String getLastBlogPostTitle() {
+        if (blogs.size() == 0)
+            throw new RuntimeException("No blogs found");
+
+        return blogs.get(blogs.size()-1).blogTitle;
+    }
+
+
+}
+
+```
 
 # Contribution Guidelines
 
