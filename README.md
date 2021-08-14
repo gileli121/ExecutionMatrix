@@ -4,6 +4,7 @@ ExecutionMatrix - Deploy, Host, and view your JUnit 5 tests reports in an extern
 
 # Screenshots
 ![image](https://user-images.githubusercontent.com/17680514/129444735-5b5eb456-1e7a-4f08-87c0-67bad0c6de82.png)
+![image](https://user-images.githubusercontent.com/17680514/129449779-66eac6ce-df12-4ce8-ba8d-a49cc40a798b.png)
 ![image](https://user-images.githubusercontent.com/17680514/129417972-5238bb6e-9779-4ce7-8ae1-c49fe0aac617.png)
 ![image](https://user-images.githubusercontent.com/17680514/129444686-f20c6ae7-a708-42f2-8657-032f55c220ae.png)
 ![image](https://user-images.githubusercontent.com/17680514/129414108-35a8806b-13ba-45ed-9741-f2e125faef36.png)
@@ -397,6 +398,61 @@ public class MyFakeBlogWebApp {
 }
 
 ```
+
+#### Basic Example that shows the results kinds
+
+```java
+package tests;
+
+import executionmatrix.junit5.extension.ExecutionMatrixExtension;
+import executionmatrix.junit5.extension.annotations.TestWithVersionEnv;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+@ExtendWith(ExecutionMatrixExtension.class)
+@DisplayName("Result Kinds Example")
+@Tag("BasicFeature")
+@TestWithVersionEnv("TARGET_BUILD_VERSION")
+public class ResultKindsExample {
+
+    @Test
+    @DisplayName("Passed Test")
+    public void passedTest() {
+        System.out.println("A passed Test");
+    }
+
+    @Test
+    @DisplayName("Failed Test")
+    public void failedTest() {
+        fail("A failed Test");
+    }
+
+    @Test
+    @DisplayName("Fatal-Failed Test")
+    public void fatalFailedTest() throws Exception {
+        throw new Exception("A fatal failed test");
+    }
+
+    @Test
+    @DisplayName("Disabled Test")
+    @Disabled
+    public void disabledTest() {
+        System.out.println("A disabled test");
+    }
+
+}
+
+```
+
+This will render into:
+![image](https://user-images.githubusercontent.com/17680514/129449813-f2f74694-0a4b-4233-9adb-e873ff8af117.png)
+
+
 
 # Contribution Guidelines
 
