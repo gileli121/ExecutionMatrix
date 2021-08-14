@@ -72,11 +72,11 @@
               {{twe.testNameView}} ({{utils.getExecutionResultString(twe.executions[0].executionResult)}})
             </div>
           </button>
-          <div style="padding-left: 35px">
+          <div>
             <button mat-button *ngFor="let ex of twe.executions" (click)="loadTestExecution(ex.id,twe)"
                     [routerLink]="['/executions']"
                     [queryParams]="{ testExecution: ex.id}" queryParamsHandling="merge"
-                    class="test-row test-row-item test-sub-row-result" [ngClass]="{
+                    class="test-row test-row-item test-sub-row-result" style="margin-left: 70px" [ngClass]="{
               'test-row-passed':
                 ex.executionResult === ExecutionResult.passed,
               'test-row-failed':
