@@ -92,11 +92,7 @@
                 'test-row-selected': ex.id === selectedExecutionId
             }" [ngStyle]="{'display': twe.isExpanded ? 'block' : 'none'}">
               <div class="test-row-info">
-
-                  <span>{{utils.getExecutionResultString(ex.executionResult)}} [Executed on version {{ex.version.name}}, at {{datePipe.transform(ex.executionDate, 'dd/MM/yyyy')}}
-                    ]</span>
-
-
+                  <span>{{getExecutionResultLineString(ex)}}</span>
               </div>
             </button>
           </div>

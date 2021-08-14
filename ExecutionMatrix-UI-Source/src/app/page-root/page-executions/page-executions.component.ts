@@ -1,8 +1,8 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import { ApiServiceService } from '../../services/api-service.service';
-import { Observable } from 'rxjs';
-import { TestWithExecution } from '../../models/test-with-execution.model';
+import {ApiServiceService} from '../../services/api-service.service';
+import {Observable} from 'rxjs';
+import {TestWithExecution} from '../../models/test-with-execution.model';
 import {ExecutionResult} from "../../models/execution-result";
 import {DatePipe} from "@angular/common";
 import {ExecutionInTest} from "../../models/execution-in-test.model";
@@ -24,12 +24,11 @@ interface IFilter {
   filterName: string;
   filterTag: string;
 
-  initFilterOptions(onLoaded: () => any):void;
+  initFilterOptions(onLoaded: () => any): void;
 
   selectedFilter: FilterOption | undefined;
 
-  get
-  filterOptions():  FilterOption[];
+  get filterOptions(): FilterOption[];
 }
 
 class ClassFilter implements IFilter {
@@ -40,15 +39,15 @@ class ClassFilter implements IFilter {
   selectedFilter: FilterOption | undefined = undefined;
 
 
-
-  constructor(public api: ApiServiceService) {}
+  constructor(public api: ApiServiceService) {
+  }
 
   get filterOptions(): FilterOption[] {
     return this.cachedOptions;
   }
 
   initFilterOptions(onLoaded: () => any): void {
-    let observable:Observable<void> = new Observable<void>();
+    let observable: Observable<void> = new Observable<void>();
     if (this.cachedOptions.length == 0)
       this.api.getTestClasses().subscribe((testClasses) => {
         for (const testClass of testClasses) {
@@ -74,7 +73,8 @@ class VersionFilter implements IFilter {
   cachedOptions: FilterOption[] = [];
   selectedFilter: FilterOption | undefined = undefined;
 
-  constructor(public api: ApiServiceService) {}
+  constructor(public api: ApiServiceService) {
+  }
 
   get filterOptions(): FilterOption[] {
     return this.cachedOptions;
@@ -103,7 +103,8 @@ class FeatureFilter implements IFilter {
   cachedOptions: FilterOption[] = [];
   selectedFilter: FilterOption | undefined = undefined;
 
-  constructor(public api: ApiServiceService) {}
+  constructor(public api: ApiServiceService) {
+  }
 
   get filterOptions(): FilterOption[] {
     return this.cachedOptions;
@@ -142,18 +143,18 @@ export class PageExecutionsComponent implements OnInit {
 
   usedFilters: IFilter[] = [];
 
-  testsWithExecutions:TestWithExecution[] = []
+  testsWithExecutions: TestWithExecution[] = []
 
   ExecutionResult = ExecutionResult;
 
-  selectedTest?:TestWithExecution;
-  selectedExecutionId?:number;
+  selectedTest?: TestWithExecution;
+  selectedExecutionId?: number;
 
   isTestListInit = false;
 
-  @ViewChild('pageContainer', { static: true }) pageContainer: ElementRef | undefined;
+  @ViewChild('pageContainer', {static: true}) pageContainer: ElementRef | undefined;
 
-  selectedTestExecutionResult?:TestExecution;
+  selectedTestExecutionResult?: TestExecution;
 
 
   constructor(
@@ -161,9 +162,10 @@ export class PageExecutionsComponent implements OnInit {
     private route: ActivatedRoute,
     public api: ApiServiceService,
     public datePipe: DatePipe,
-    public utils:UtilsService,
-    public globals:GlobalsService
-  ) {}
+    public utils: UtilsService,
+    public globals: GlobalsService
+  ) {
+  }
 
   ngOnInit(): void {
 
@@ -199,7 +201,7 @@ export class PageExecutionsComponent implements OnInit {
     const that = this;
 
 
-    function loadFilterFromQuery(filterTag:string) {
+    function loadFilterFromQuery(filterTag: string) {
       const filterValue = that.route.snapshot.queryParamMap.get(filterTag);
       if (filterValue) {
         let foundFilter = that.getAvailableFilterByTag(filterTag);
@@ -224,7 +226,7 @@ export class PageExecutionsComponent implements OnInit {
     let versionFilter = this.getUsedFilterByTag('versionId');
     if (versionFilter) versionId = versionFilter.selectedFilter?.id;
 
-    this.api.getTestsWithExecutions(versionId,testClassId,featureId).subscribe(testsWithExecutions => {
+    this.api.getTestsWithExecutions(versionId, testClassId, featureId).subscribe(testsWithExecutions => {
 
       if (this.selectedExecutionId) {
         for (let ex of testsWithExecutions) {
@@ -232,7 +234,7 @@ export class PageExecutionsComponent implements OnInit {
           for (let exc of ex.executions)
             if (this.selectedExecutionId === exc.id) {
               ex.isExpanded = true;
-              this.loadTestExecution(this.selectedExecutionId,ex);
+              this.loadTestExecution(this.selectedExecutionId, ex);
               break;
             }
           if (ex.isExpanded)
@@ -269,15 +271,13 @@ export class PageExecutionsComponent implements OnInit {
 
   private updateFiltersInQueryUrl() {
 
-
-
     for (let filter of this.usedFilters) {
       if (!filter.filterTag || !filter.selectedFilter?.id)
         continue
 
       this.router.navigate([], {
         relativeTo: this.route,
-        queryParams: { [filter.filterTag]: filter.selectedFilter?.id },
+        queryParams: {[filter.filterTag]: filter.selectedFilter?.id},
         queryParamsHandling: 'merge',
       });
     }
@@ -287,13 +287,11 @@ export class PageExecutionsComponent implements OnInit {
       if (filterVal && filterVal !== '') {
         this.router.navigate([], {
           // relativeTo: this.route,
-          queryParams: { [filter.filterTag]: null },
+          queryParams: {[filter.filterTag]: null},
           queryParamsHandling: 'merge',
         });
       }
     }
-
-
   }
 
   private getAvailableFilterByTag(filterTag: string): IFilter | null {
@@ -303,7 +301,7 @@ export class PageExecutionsComponent implements OnInit {
     return null;
   }
 
-  private getUsedFilterByTag(filterTag:string) : IFilter | null {
+  private getUsedFilterByTag(filterTag: string): IFilter | null {
     for (let filter of this.usedFilters) {
       if (filterTag === filter.filterTag) return filter;
     }
@@ -315,7 +313,7 @@ export class PageExecutionsComponent implements OnInit {
   }
 
 
-  loadTestExecution(testExecutionId: number,selectedTest?:TestWithExecution) {
+  loadTestExecution(testExecutionId: number, selectedTest?: TestWithExecution) {
     this.selectedExecutionId = testExecutionId;
     if (selectedTest)
       this.selectedTest = selectedTest;
@@ -336,7 +334,7 @@ export class PageExecutionsComponent implements OnInit {
   }
 
 
-  shouldShowTestWithExecution(testWithExecution:TestWithExecution):boolean {
+  shouldShowTestWithExecution(testWithExecution: TestWithExecution): boolean {
     for (let filter of this.usedFilters) {
       if (!filter.selectedFilter) continue;
       if (filter instanceof ClassFilter) {
@@ -373,12 +371,17 @@ export class PageExecutionsComponent implements OnInit {
     return true;
   }
 
-  onSelectFilterValue(filter: IFilter, filterOption:FilterOption) {
+  onSelectFilterValue(filter: IFilter, filterOption: FilterOption) {
 
     filter.selectedFilter = filterOption;
 
     this.testsWithExecutions = [];
     this.updateFiltersInQueryUrl();
     this.initTestsList(false);
+  }
+
+  getExecutionResultLineString(execution: ExecutionInTest) {
+    return `${this.utils.getExecutionResultString(execution.executionResult)} (Version: ${execution.version.name},
+    Time: ${this.datePipe.transform(execution.executionDate, 'M/d/yy hh:mm a')})`
   }
 }
