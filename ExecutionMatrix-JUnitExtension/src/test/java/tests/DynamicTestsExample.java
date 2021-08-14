@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 @TestWithVersionEnv("TARGET_BUILD_VERSION")
 @DisplayName("Sanity Tests")
 @Tag("BasicUserFunctionality")
-public class MyFakeBlogWebAppTests {
+public class DynamicTestsExample {
 
     @TestFactory
     @DisplayName("Login Tests")
