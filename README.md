@@ -17,7 +17,7 @@ ExecutionMatrix - Deploy, Host, and view your JUnit 5 tests reports in an extern
 ## Install the Report server
 > TODO. For now you will need to build it yourself from the source
 
-## Install the JUnit report extension
+## Install the JUnit 5 report extension
 > TODO. For now you will need to build it yourself from the source
 
 ## Setup the JUnit extension & execution configurations
