@@ -54,7 +54,7 @@ If you use IntelliJ, you can configure the `TARGET_BUILD_VERSION` environment va
 
 Next, you must add `@Tag` to the test class & tests.
 The tag is mapped to the feature that shown here:
-![image](https://user-images.githubusercontent.com/17680514/129415442-2462de5f-5fe5-4157-840f-764261e887c7.png)
+![image](https://user-images.githubusercontent.com/17680514/129439072-bef930db-17f2-4976-bd76-d987dd2550ed.png)
 
 You will also be able to select only executions that are related to the `@Tag`/Feature
 ![image](https://user-images.githubusercontent.com/17680514/129415665-9ab0e8e0-8b86-4562-9761-1c45b334802c.png)
