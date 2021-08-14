@@ -28,7 +28,7 @@ public class ExecutionMatrixExtension implements InvocationInterceptor, BeforeEa
     private static final Logger log = LogManager.getLogger(ExecutionMatrixExtension.class);
     private static final String EOL = System.lineSeparator();
 
-    private static final String REPORTS_SERVER_API = System.getenv("REPORTS_SERVER_ADDRESS"); // Example value: http://localhost:49689
+    private static final String REPORTS_SERVER_ADDRESS = System.getenv("REPORTS_SERVER_ADDRESS"); // Example value: http://localhost:49689
     private PostTestClassDTO testClassDTO = null;
 
     private String versionName = "v0.0.0";
@@ -80,8 +80,8 @@ public class ExecutionMatrixExtension implements InvocationInterceptor, BeforeEa
     public void afterEach(ExtensionContext extensionContext) throws Exception {
         // here we will submit the execution result to the server
 
-        if (REPORTS_SERVER_API == null) {
-            log.error("Skipping reporting to ExecutionMatrix server because the environment variable REPORTS_SERVER_API is undefined." + EOL
+        if (REPORTS_SERVER_ADDRESS == null) {
+            log.error("Skipping reporting to ExecutionMatrix server because the environment variable REPORTS_SERVER_ADDRESS is undefined." + EOL
                     + "Please define this variable first. Example value: http://localhost:49689");
             return;
         }
@@ -98,7 +98,7 @@ public class ExecutionMatrixExtension implements InvocationInterceptor, BeforeEa
 
 
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            HttpPost request = new HttpPost(REPORTS_SERVER_API + "/api/ReportExtension/SubmitExecution");
+            HttpPost request = new HttpPost(REPORTS_SERVER_ADDRESS + "/api/ReportExtension/SubmitExecution");
             StringEntity params = new StringEntity(executionResultJson);
             request.addHeader("content-type", "application/json");
             request.setEntity(params);
