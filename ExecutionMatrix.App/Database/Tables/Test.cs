@@ -19,6 +19,9 @@ namespace ExecutionMatrix.App.Database.Tables
         public Test TestOwner { get; set; }
         public int? TestId { get; set; }
 
+        public Version FirstVersion { get; set; }
+        public int? FirstVersionId { get; set; }
+
         [MaxLength(250)] public string TestMethodName { get; set; }
 
         [MaxLength(250)] public string TestDisplayName { get; set; }
@@ -31,9 +34,10 @@ namespace ExecutionMatrix.App.Database.Tables
         {
         }
 
-        public Test(PostExecutionDTO executionDto, TestClass testClass = null)
+        public Test(PostExecutionDTO executionDto, TestClass testClass = null, Version firstVersion = null)
         {
             this.TestClass = testClass;
+            this.FirstVersion = firstVersion;
             this.TestMethodName = executionDto.TestMethodName;
             this.TestDisplayName = executionDto.TestDisplayName;
             if (executionDto.ChildExecutions is {Count: > 0})

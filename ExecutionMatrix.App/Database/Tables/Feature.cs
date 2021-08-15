@@ -12,18 +12,21 @@ namespace ExecutionMatrix.App.Database.Tables
         public int Id { get; set; }
         [MaxLength(250)]
         [Required]
+        public Version FirstVersion { get; set; }
+        public int FirstVersionId { get; set; }
         public string FeatureName { get; set; }
         public virtual ICollection<Test> Tests { get; set; } = new List<Test>();
-
         public virtual ICollection<TestClass> TestClasses { get; set; }
+
 
         public Feature()
         {
         }
 
-        public Feature(string featureName)
+        public Feature(string featureName, Version firstVersion)
         {
             this.FeatureName = featureName;
+            this.FirstVersion = firstVersion;
         }
 
     }

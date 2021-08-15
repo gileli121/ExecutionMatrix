@@ -44,21 +44,29 @@ namespace ExecutionMatrix.App.Controllers
                     c.PackageName == body.TestClass.PackageName && c.ClassName == body.TestClass.ClassName)
                 .FirstOrDefaultAsync();
 
+            var version = await db.Versions.Where(v => v.Name == body.VersionName).FirstOrDefaultAsync();
+            if (version == null)
+            {
+                version = new Database.Tables.Version(body.VersionName);
+                db.Versions.Add(version);
+            }
+
             Test test;
             if (testClass == null)
             {
                 testClass = new TestClass(body.TestClass);
                 // Create the test here and add it to the DB
-                test = new Test(body, testClass);
+                test = new Test(body, testClass, version);
                 db.Tests.Add(test);
             }
             else
             {
-                test = tests.FirstOrDefault(testCheck => testCheck.TestClass != null && testCheck.IsMatchToExecution(body));
+                test = tests.FirstOrDefault(testCheck =>
+                    testCheck.TestClass != null && testCheck.IsMatchToExecution(body));
                 if (test == null)
                 {
                     // Create the test here and add it to the DB
-                    test = new Test(body, testClass);
+                    test = new Test(body, testClass, version);
                     db.Tests.Add(test);
                 }
             }
@@ -67,14 +75,13 @@ namespace ExecutionMatrix.App.Controllers
             if (body.FeatureNames == null || body.FeatureNames.Count == 0)
                 return BadRequest("The FeatureNames field is required.");
 
-
             foreach (var bodyFeatureName in body.FeatureNames)
             {
                 var feature = await db.Features.Where(f => f.FeatureName == bodyFeatureName).Include(f => f.Tests)
                     .FirstOrDefaultAsync();
                 if (feature == null)
                 {
-                    feature = new Feature(bodyFeatureName);
+                    feature = new Feature(bodyFeatureName, version);
                     feature.Tests.Add(test);
                     db.Features.Add(feature);
                 }
@@ -98,13 +105,6 @@ namespace ExecutionMatrix.App.Controllers
                     test.Features.RemoveAt(i);
             }
 
-
-            var version = await db.Versions.Where(v => v.Name == body.VersionName).FirstOrDefaultAsync();
-            if (version == null)
-            {
-                version = new Database.Tables.Version(body.VersionName);
-                db.Versions.Add(version);
-            }
 
             var execution = new Execution(test, body, version);
             db.Executions.Add(execution);

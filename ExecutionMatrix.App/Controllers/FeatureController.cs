@@ -54,7 +54,10 @@ namespace ExecutionMatrix.App.Controllers
         public async Task<ActionResult<ICollection<FeatureSummary>>> GetFeaturesSummary(
             [FromQuery] int versionId)
         {
+            
+
             var features = await db.Features
+                .Where(f => f.FirstVersionId <= versionId)
                 .Include(f => f.Tests)
                 .ToListAsync();
 
@@ -72,24 +75,31 @@ namespace ExecutionMatrix.App.Controllers
                 var totalPassedTests = 0;
                 foreach (var featureTest in feature.Tests)
                 {
-                    totalTests++;
-
-                    var lastExInFeature = executionsInVersion.FirstOrDefault(e => e.TestId == featureTest.Id);
-
-                    if (lastExInFeature == null)
-                        continue;
-
-                    if (lastExInFeature.ExecutionResult == ExecutionResult.Passed)
+                    if (featureTest.FirstVersionId <= versionId)
                     {
-                        totalPassedTests++;
-                        totalExecutedTests++;
-                    }
-                    else if (lastExInFeature.ExecutionResult != ExecutionResult.Skipped && lastExInFeature.ExecutionResult != ExecutionResult.UnExecuted)
-                    {
-                        totalExecutedTests++;
+                        totalTests++;
+
+                        var lastExInFeature = executionsInVersion.FirstOrDefault(e => e.TestId == featureTest.Id);
+
+                        if (lastExInFeature == null)
+                            continue;
+
+                        if (lastExInFeature.ExecutionResult == ExecutionResult.Passed)
+                        {
+                            totalPassedTests++;
+                            totalExecutedTests++;
+                        }
+                        else if (lastExInFeature.ExecutionResult != ExecutionResult.Skipped &&
+                                 lastExInFeature.ExecutionResult != ExecutionResult.UnExecuted)
+                        {
+                            totalExecutedTests++;
+                        }
                     }
 
                 }
+
+                if (totalTests == 0)
+                    continue;
 
                 var featureSummary = new FeatureSummary(feature, totalTests, totalExecutedTests, totalPassedTests);
 
