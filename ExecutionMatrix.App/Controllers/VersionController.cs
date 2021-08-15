@@ -27,8 +27,9 @@ namespace ExecutionMatrix.App.Controllers
         [HttpGet("GetVersions")]
         public async Task<ActionResult<ICollection<Version>>> GetTestClasses()
         {
-            var versions = await db.Versions.ToListAsync();
-            versions.OrderByDescending(v => v.Id);
+            var versions = await db.Versions
+                .OrderByDescending(v => v.Id)
+                .ToListAsync();
             return Ok(versions);
         }
 
