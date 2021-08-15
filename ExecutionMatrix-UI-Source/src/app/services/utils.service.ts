@@ -9,7 +9,10 @@ export class UtilsService {
   constructor() { }
 
 
-  getExecutionResultString(executionResult:ExecutionResult) {
+  getExecutionResultString(executionResult:ExecutionResult | null) {
+    if (executionResult == null)
+      return 'Unexecuted';
+
     switch (executionResult) {
       case ExecutionResult.passed:
         return 'Passed';

@@ -7,7 +7,7 @@ using ExecutionMatrix.App.Database.Tables;
 
 namespace ExecutionMatrix.App.Controllers.DTOs
 {
-    public class TestWithExecutionsDTO
+    public class TestSummaryDTO
     {
 
         public int TestId { get; set; }
@@ -23,9 +23,9 @@ namespace ExecutionMatrix.App.Controllers.DTOs
         public List<ExecutionInTestDTO> Executions { get; set; }
 
 
-        public TestWithExecutionsDTO() {}
+        public TestSummaryDTO() {}
 
-        public TestWithExecutionsDTO(Test test, List<Execution> executions)
+        public TestSummaryDTO(Test test, List<Execution> executions)
         {
             this.TestId = test.Id;
             this.TestMethodName = test.TestMethodName;
@@ -33,13 +33,20 @@ namespace ExecutionMatrix.App.Controllers.DTOs
             if (test.TestClass != null)
                 this.TestClass = new TestClassDTO(test.TestClass);
 
+
             this.Features = new List<FeatureInTestDTO>();
-            foreach (var testFeature in test.Features)
-                this.Features.Add(new FeatureInTestDTO(testFeature));
+            if (test.Features?.Count > 0)
+            {
+                foreach (var testFeature in test.Features)
+                    this.Features.Add(new FeatureInTestDTO(testFeature));
+            }
 
             this.Executions = new List<ExecutionInTestDTO>();
-            foreach (var execution in executions)
-                this.Executions.Add(new ExecutionInTestDTO(execution));
+            if (executions?.Count > 0)
+            {
+                foreach (var execution in executions)
+                    this.Executions.Add(new ExecutionInTestDTO(execution));
+            }
         }
 
     }

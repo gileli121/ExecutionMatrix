@@ -2,13 +2,13 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {ApiServiceService} from '../../services/api-service.service';
 import {Observable} from 'rxjs';
-import {TestWithExecution} from '../../models/test-with-execution.model';
 import {ExecutionResult} from "../../models/execution-result";
 import {DatePipe} from "@angular/common";
 import {ExecutionInTest} from "../../models/execution-in-test.model";
 import {TestExecution} from "../../models/test-execution.model";
 import {UtilsService} from "../../services/utils.service";
 import {GlobalsService} from "../../services/globals.service";
+import {TestSummary} from "../../models/test-summary.model";
 
 class FilterOption {
   id: number;
@@ -143,11 +143,11 @@ export class PageExecutionsComponent implements OnInit {
 
   usedFilters: IFilter[] = [];
 
-  testsWithExecutions: TestWithExecution[] = []
+  testsWithExecutions: TestSummary[] = []
 
   ExecutionResult = ExecutionResult;
 
-  selectedTest?: TestWithExecution;
+  selectedTest?: TestSummary;
   selectedExecutionId?: number;
 
   isTestListInit = false;
@@ -155,6 +155,8 @@ export class PageExecutionsComponent implements OnInit {
   @ViewChild('pageContainer', {static: true}) pageContainer: ElementRef | undefined;
 
   selectedTestExecutionResult?: TestExecution;
+
+  showUnExecutedTests = true;
 
 
   constructor(
@@ -226,7 +228,7 @@ export class PageExecutionsComponent implements OnInit {
     let versionFilter = this.getUsedFilterByTag('versionId');
     if (versionFilter) versionId = versionFilter.selectedFilter?.id;
 
-    this.api.getTestsWithExecutions(versionId, testClassId, featureId).subscribe(testsWithExecutions => {
+    this.api.getTestsSummary(versionId, testClassId, featureId).subscribe(testsWithExecutions => {
 
       if (this.selectedExecutionId) {
         for (let ex of testsWithExecutions) {
@@ -308,12 +310,12 @@ export class PageExecutionsComponent implements OnInit {
     return null;
   }
 
-  onTestToggleExpand(testWithExecution: TestWithExecution) {
+  onTestToggleExpand(testWithExecution: TestSummary) {
     testWithExecution.isExpanded = !testWithExecution.isExpanded;
   }
 
 
-  loadTestExecution(testExecutionId: number, selectedTest?: TestWithExecution) {
+  loadTestExecution(testExecutionId: number, selectedTest?: TestSummary) {
     this.selectedExecutionId = testExecutionId;
     if (selectedTest)
       this.selectedTest = selectedTest;
@@ -333,44 +335,6 @@ export class PageExecutionsComponent implements OnInit {
     this.selectedTestExecutionResult = $event;
   }
 
-
-  shouldShowTestWithExecution(testWithExecution: TestWithExecution): boolean {
-    for (let filter of this.usedFilters) {
-      if (!filter.selectedFilter) continue;
-      if (filter instanceof ClassFilter) {
-        if (filter.selectedFilter.id !== testWithExecution.testClass?.id)
-          return false;
-      } else if (filter instanceof FeatureFilter) {
-        if (!testWithExecution.features)
-          continue;
-
-        let featureFound = false;
-        for (let feature of testWithExecution.features) {
-          if (filter.selectedFilter?.id === feature.id) {
-            featureFound = true;
-            break;
-          }
-        }
-
-        if (!featureFound)
-          return false;
-      } else if (filter instanceof VersionFilter) {
-        if (!testWithExecution.executions)
-          continue;
-
-        let versionFound = false;
-        for (let execution of testWithExecution.executions) {
-          if (filter.selectedFilter?.id === execution.version?.id) {
-            versionFound = true;
-          }
-        }
-        if (!versionFound)
-          return false;
-      }
-    }
-    return true;
-  }
-
   onSelectFilterValue(filter: IFilter, filterOption: FilterOption) {
 
     filter.selectedFilter = filterOption;
@@ -384,4 +348,10 @@ export class PageExecutionsComponent implements OnInit {
     return `${this.utils.getExecutionResultString(execution.executionResult)} (Version: ${execution.version.name},
     Time: ${this.datePipe.transform(execution.executionDate, 'M/d/yy hh:mm a')})`
   }
+
+  // getLastExecutionResult(test:TestWithExecution):ExecutionResult | null {
+  //   if (test.executions?.length > 0)
+  //     return test.executions[0].executionResult;
+  //   return null;
+  // }
 }

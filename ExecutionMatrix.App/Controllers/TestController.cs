@@ -26,7 +26,7 @@ namespace ExecutionMatrix.App.Controllers
 
 
         [HttpGet("GetTestsWithExecutions")]
-        public async Task<ActionResult<ICollection<TestWithExecutionsDTO>>> GetExecutions
+        public async Task<ActionResult<ICollection<TestSummaryDTO>>> GetExecutions
         (
             [FromQuery] int? versionId,
             [FromQuery] int? testClassId,
@@ -59,7 +59,7 @@ namespace ExecutionMatrix.App.Controllers
                     })
                 .OrderByDescending(t => t.TestId);
 
-            var testsWithExecutionsDtoList = new List<TestWithExecutionsDTO>();
+            var testsWithExecutionsDtoList = new List<TestSummaryDTO>();
 
             foreach (var testWithExecutions in testsWithExecutions)
             {
@@ -69,10 +69,73 @@ namespace ExecutionMatrix.App.Controllers
                     .Include(t => t.TestClass)
                     .First();
 
-                testsWithExecutionsDtoList.Add(new TestWithExecutionsDTO(test,testWithExecutions.Executions.ToList()));
+                testsWithExecutionsDtoList.Add(new TestSummaryDTO(test, testWithExecutions.Executions.ToList()));
             }
 
             return Ok(testsWithExecutionsDtoList);
+        }
+
+
+        [HttpGet("GetTestsSummary")]
+        public async Task<ActionResult<ICollection<TestSummaryDTO>>> GetTestsSummary
+        (
+            [FromQuery] int? versionId,
+            [FromQuery] int? testClassId,
+            [FromQuery] int? featureId)
+        {
+            var testsQ = db.Tests.Where(t => t.TestOwner == null);
+
+            if (versionId != null)
+                testsQ = db.Tests.Where(t => versionId >= t.FirstVersionId);
+
+            if (testClassId != null)
+                testsQ = testsQ.Where(t => t.TestClassId == testClassId);
+
+            if (featureId != null)
+                testsQ = testsQ
+                    .Include(t => t.Features)
+                    .Where(t => t.Features.Any(f => f.Id == featureId));
+
+            testsQ = testsQ
+                .Include(t => t.Executions).ThenInclude(e => e.Version)
+                .Include(t => t.Features)
+                .Include(t => t.TestClass);
+
+            var tests = await testsQ.ToListAsync();
+
+            var testsDtos = new List<TestSummaryDTO>();
+
+            if (tests == null)
+                return testsDtos;
+
+            if (versionId == null)
+            {
+                testsDtos.AddRange(tests.Select(test => new TestSummaryDTO(test, test.Executions?.ToList())));
+            }
+            else
+            {
+                var testsWithExecutions = new List<TestSummaryDTO>();
+                var testsWithoutExecutions = new List<TestSummaryDTO>();
+
+                foreach (var test in tests)
+                {
+                    List<Execution> matchedExecutions = null;
+                    if (test.Executions?.Count > 0)
+                        matchedExecutions = test.Executions.Where(e => e.VersionId == versionId).ToList();
+
+
+                    if (matchedExecutions?.Count > 0)
+                        testsWithExecutions.Add(new TestSummaryDTO(test, matchedExecutions));
+                    else
+                        testsWithoutExecutions.Add(new TestSummaryDTO(test, null));
+                }
+
+                testsDtos.AddRange(testsWithExecutions);
+                testsDtos.AddRange(testsWithoutExecutions);
+            }
+
+
+            return Ok(testsDtos);
         }
     }
 }

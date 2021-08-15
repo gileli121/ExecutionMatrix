@@ -48,10 +48,10 @@
     <mat-card-title>Executions</mat-card-title>
     <ul class="test-items">
       <li *ngFor="let twe of testsWithExecutions" class="test-row-container">
-        <div *ngIf="shouldShowTestWithExecution(twe)">
+        <div>
           <div class="test-row test-row-left-content" style="height: 8px">
 
-            <button mat-icon-button (click)="onTestToggleExpand(twe)">
+            <button mat-icon-button *ngIf="twe.haveExecutions" (click)="onTestToggleExpand(twe)">
               <mat-icon> {{!twe.isExpanded ? 'chevron_right' : 'expand_more'}}  </mat-icon>
             </button>
           </div>
@@ -60,21 +60,21 @@
                   title="Class: {{twe.testClass?.packageName + '.' + twe.testClass?.className}}}"
                   [ngClass]="{
         'test-row-passed':
-          twe.executions[0].executionResult === ExecutionResult.passed,
+          twe.lastExecution && twe.lastExecution.executionResult === ExecutionResult.passed,
         'test-row-failed':
-          twe.executions[0].executionResult === ExecutionResult.failed,
+          twe.lastExecution && twe.lastExecution.executionResult === ExecutionResult.failed,
         'test-row-fatal':
-          twe.executions[0].executionResult === ExecutionResult.fatal,
+          twe.lastExecution && twe.lastExecution.executionResult === ExecutionResult.fatal,
         'test-row-skipped':
-          twe.executions[0].executionResult === ExecutionResult.skipped,
+          twe.lastExecution && twe.lastExecution.executionResult === ExecutionResult.skipped,
         'test-row-unexecuted':
-          twe.executions[0].executionResult === ExecutionResult.unexecuted
+          !twe.lastExecution || twe.lastExecution.executionResult === ExecutionResult.unexecuted
       }">
             <div class="test-row-name">
-              {{twe.testNameView}} ({{utils.getExecutionResultString(twe.executions[0].executionResult)}})
+              {{twe.testNameView}} ({{utils.getExecutionResultString(twe.lastExecution ? twe.lastExecution.executionResult : null)}})
             </div>
           </button>
-          <div>
+          <div *ngIf="twe.haveExecutions">
             <button mat-button *ngFor="let ex of twe.executions" (click)="loadTestExecution(ex.id,twe)"
                     [routerLink]="['/executions']"
                     [queryParams]="{ testExecution: ex.id}" queryParamsHandling="merge"

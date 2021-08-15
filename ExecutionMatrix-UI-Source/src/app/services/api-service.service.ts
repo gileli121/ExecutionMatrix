@@ -5,11 +5,11 @@ import {environment} from '../../environments/environment';
 import {TestExecution} from '../models/test-execution.model';
 import {TestClass} from '../models/test-class.model';
 import {Version} from '../models/version.model';
-import {TestWithExecution} from '../models/test-with-execution.model';
 import {map} from 'rxjs/operators';
 import {FeatureInTest} from "../models/feature-in-test.model";
 import {FeatureSummary} from "../models/feature-summary.model";
 import {TestClassSummary} from "../models/test-class-summary.model";
+import {TestSummary} from "../models/test-summary.model";
 
 @Injectable({
   providedIn: 'root',
@@ -18,11 +18,11 @@ export class ApiServiceService {
   constructor(private http: HttpClient) {
   }
 
-  getTestsWithExecutions(
+  getTestsSummary(
     versionId?: number,
     testClassId?: number,
     requirementId?: number
-  ): Observable<TestWithExecution[]> {
+  ): Observable<TestSummary[]> {
     let parms: any = {};
 
     if (versionId) parms.versionId = versionId;
@@ -32,17 +32,17 @@ export class ApiServiceService {
     if (requirementId) parms.requirementId = requirementId;
 
     return this.http
-      .get<TestWithExecution[]>(
-        `${environment.webApi}/Test/GetTestsWithExecutions`,
+      .get<TestSummary[]>(
+        `${environment.webApi}/Test/GetTestsSummary`,
         {
           params: parms,
         }
       )
       .pipe(
         map((result) => {
-          let modifiedResult = new Array<TestWithExecution>();
+          let modifiedResult = new Array<TestSummary>();
           for (let resultItem of result)
-            modifiedResult.push(new TestWithExecution(resultItem));
+            modifiedResult.push(new TestSummary(resultItem));
           return modifiedResult;
         })
       );
