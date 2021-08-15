@@ -2,6 +2,7 @@ package tests;
 
 import app.MyFakeBlogWebApp;
 import executionmatrix.junit5.extension.ExecutionMatrixExtension;
+import executionmatrix.junit5.extension.annotations.TestWithVersion;
 import executionmatrix.junit5.extension.annotations.TestWithVersionEnv;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(ExecutionMatrixExtension.class)
 @DisplayName("Basic Tests Example")
 @Tag("Account")
-@TestWithVersionEnv("TARGET_BUILD_VERSION")
+@TestWithVersion("v0.0.1")
 public class BasicTestsExample {
 
     private MyFakeBlogWebApp app;
@@ -31,6 +32,7 @@ public class BasicTestsExample {
         System.out.println("Testing a valid login scenario ...");
         app.login("user1","1234");
         assertTrue(app.isLoggedIn(),"Failed to log in");
+        fail("Failed to login!");
     }
 
     @Test

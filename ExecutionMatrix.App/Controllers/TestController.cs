@@ -125,7 +125,10 @@ namespace ExecutionMatrix.App.Controllers
 
 
                     if (matchedExecutions?.Count > 0)
+                    {
+                        matchedExecutions = matchedExecutions.OrderByDescending(e => e.Id).ToList();
                         testsWithExecutions.Add(new TestSummaryDTO(test, matchedExecutions));
+                    }
                     else
                         testsWithoutExecutions.Add(new TestSummaryDTO(test, null));
                 }

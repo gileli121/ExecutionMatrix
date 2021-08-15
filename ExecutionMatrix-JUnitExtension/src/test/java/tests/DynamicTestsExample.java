@@ -1,6 +1,7 @@
 package tests;
 
 import executionmatrix.junit5.extension.ExecutionMatrixExtension;
+import executionmatrix.junit5.extension.annotations.TestWithVersion;
 import executionmatrix.junit5.extension.annotations.TestWithVersionEnv;
 import app.MyFakeBlogWebApp;
 import org.junit.jupiter.api.*;
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 @ExtendWith(ExecutionMatrixExtension.class)
-@TestWithVersionEnv("TARGET_BUILD_VERSION")
+@TestWithVersion("v0.0.2")
 @DisplayName("Sanity Tests")
 @Tag("BasicUserFunctionality")
 public class DynamicTestsExample {
@@ -29,6 +30,7 @@ public class DynamicTestsExample {
                     MyFakeBlogWebApp app = new MyFakeBlogWebApp();
                     app.login("user1","1234");
                     assertTrue(app.isLoggedIn(),"Failed to log in");
+                    fail("Failed to login!");
                 }),
                 dynamicContainer("Failure login tests", Stream.of(
                         dynamicTest("Login with invalid password", () -> {

@@ -1,6 +1,4 @@
 
-
-
 .tests-view-container {
   height: 80vh;
   width: 800px;
@@ -10,6 +8,7 @@
   /*position: relative;*/
   /*margin-left: -5px;*/
 }
+
 .test-items {
   margin: 0;
   padding: 0;
@@ -111,7 +110,8 @@
 .test-row-info-button {
   padding: 0 5px;
   font-size: 10px;
-  right: 5px; position: absolute;
+  right: 5px;
+  position: absolute;
   top: 15%;
 }
 
@@ -161,14 +161,37 @@
   text-align: center;
 }
 
-.filters-container {
-  /*background-color: blue;*/
-  display: flex; vertical-align: middle; align-items: center;
-  /*margin-left: 20px;*/
-  /*margin-right: 20px;*/
+.toolbar-container {
+  /*background-color: red;*/
+
   height: 50px;
   margin-bottom: 10px;
   margin-top: 5px;
+}
+
+.toolbar-card-container {
+  /*background-color: red;*/
+  display: inline-flex;
+  vertical-align: middle;
+  align-items: center;
+  height: 100%;
+
+}
+
+.filters-container {
+  width: calc(100% - 160px - 6px);
+  float: left;
+}
+
+
+.statistics-container {
+  float: right;
+  width: 160px;
+}
+
+.statistic-item-container {
+  /*background-color: red;*/
+  height: 48px;
 }
 
 .filters-menu-button-container {
@@ -218,11 +241,21 @@ mat-form-field mat-label {
 }
 
 
-
 /*New tests tree*/
 
 
-.area { border-left: 4px solid #f38787; }
-.equipamento { border-left: 4px solid #65c465; }
-.ponto { border-left: 4px solid #98b3fa; }
-.collapse.in { overflow: visible; }
+.area {
+  border-left: 4px solid #f38787;
+}
+
+.equipamento {
+  border-left: 4px solid #65c465;
+}
+
+.ponto {
+  border-left: 4px solid #98b3fa;
+}
+
+.collapse.in {
+  overflow: visible;
+}

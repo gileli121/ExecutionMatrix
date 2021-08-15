@@ -1,47 +1,61 @@
 <!--<app-comp-version-selector></app-comp-version-selector>-->
 
 <div>
-  <mat-card class="filters-container">
-    <div class="filters-menu-button-container"
-         *ngIf="availableFilters.length > 0"
-         style="display: inline-block; vertical-align: middle">
 
-      <button mat-icon-button color="primary" [matMenuTriggerFor]="menu">
-        <mat-icon>filter_list</mat-icon>
-      </button>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item *ngFor="let filter of availableFilters" (click)="onAddFilterEvent(filter)">
-          {{ filter.filterName }}
+  <div class="toolbar-container">
+
+    <mat-card class="toolbar-card-container filters-container">
+      <div class="filters-menu-button-container"
+           *ngIf="availableFilters.length > 0"
+           style="display: inline-block; vertical-align: middle">
+
+        <button mat-icon-button color="primary" [matMenuTriggerFor]="menu">
+          <mat-icon>filter_list</mat-icon>
         </button>
-      </mat-menu>
-    </div>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item *ngFor="let filter of availableFilters" (click)="onAddFilterEvent(filter)">
+            {{ filter.filterName }}
+          </button>
+        </mat-menu>
+      </div>
 
-    <div *ngIf="usedFilters.length > 0" class="filters-container">
-      <div style="display: inline-block">
-        <div *ngFor="let filter of usedFilters" class="filter-root-container">
+      <div *ngIf="usedFilters.length > 0" class="filters-container">
+        <div style="display: inline-block">
+          <div *ngFor="let filter of usedFilters" class="filter-root-container">
 
-          <div class="filter-container">
-            <mat-form-field style="width: 130px">
-              <mat-label>{{ filter.filterName }}</mat-label>
-              <mat-select value="{{filter.selectedFilter?.id}}">
-                <mat-option *ngFor="let option of filter.filterOptions" (click)="onSelectFilterValue(filter,option)"
-                            value="{{ option.id }}">
-                  {{ option.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
+            <div class="filter-container">
+              <mat-form-field style="width: 130px">
+                <mat-label>{{ filter.filterName }}</mat-label>
+                <mat-select value="{{filter.selectedFilter?.id}}">
+                  <mat-option *ngFor="let option of filter.filterOptions" (click)="onSelectFilterValue(filter,option)"
+                              value="{{ option.id }}">
+                    {{ option.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
 
-          <div class="filter-remove-container">
-            <button mat-icon-button>
-              <mat-icon color="primary" (click)="onRemoveFilterEvent(filter)">remove_circle</mat-icon>
-            </button>
+            <div class="filter-remove-container">
+              <button mat-icon-button>
+                <mat-icon color="primary" (click)="onRemoveFilterEvent(filter)">remove_circle</mat-icon>
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-  </mat-card>
+    </mat-card>
+
+    <mat-card class="toolbar-card-container statistics-container">
+
+      <div *ngIf="getUsedFilterByTag('versionId')" style="margin-left: auto; margin-right: auto">
+        <app-comp-percentage-circle [percent]="coveragePercent" [backgroundGradient]="true" [showSubtitle]="true"
+                                    [subtitle]="'coverage'"></app-comp-percentage-circle>
+        <app-comp-percentage-circle [percent]="passRatioPercent" [backgroundGradient]="true" [showSubtitle]="true"
+                                    [subtitle]="'pass'"></app-comp-percentage-circle>
+      </div>
+    </mat-card>
+  </div>
 
 
   <mat-card class="tests-view-container">
@@ -71,7 +85,8 @@
           !twe.lastExecution || twe.lastExecution.executionResult === ExecutionResult.unexecuted
       }">
             <div class="test-row-name">
-              {{twe.testNameView}} ({{utils.getExecutionResultString(twe.lastExecution ? twe.lastExecution.executionResult : null)}})
+              {{twe.testNameView}}
+              ({{utils.getExecutionResultString(twe.lastExecution ? twe.lastExecution.executionResult : null)}})
             </div>
           </button>
           <div *ngIf="twe.haveExecutions">
@@ -92,7 +107,7 @@
                 'test-row-selected': ex.id === selectedExecutionId
             }" [ngStyle]="{'display': twe.isExpanded ? 'block' : 'none'}">
               <div class="test-row-info">
-                  <span>{{getExecutionResultLineString(ex)}}</span>
+                <span>{{getExecutionResultLineString(ex)}}</span>
               </div>
             </button>
           </div>

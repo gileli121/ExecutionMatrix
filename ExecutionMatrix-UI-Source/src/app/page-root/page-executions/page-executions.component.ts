@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {ApiServiceService} from '../../services/api-service.service';
 import {Observable} from 'rxjs';
 import {ExecutionResult} from "../../models/execution-result";
@@ -152,6 +152,9 @@ export class PageExecutionsComponent implements OnInit {
 
   isTestListInit = false;
 
+  coveragePercent = 0;
+  passRatioPercent = 0;
+
   @ViewChild('pageContainer', {static: true}) pageContainer: ElementRef | undefined;
 
   selectedTestExecutionResult?: TestExecution;
@@ -243,9 +246,29 @@ export class PageExecutionsComponent implements OnInit {
             break;
         }
 
-
       }
       this.testsWithExecutions = testsWithExecutions;
+
+      let executedTests = 0;
+      let passedTests = 0;
+
+      if (testsWithExecutions?.length > 0) {
+        for (let test of testsWithExecutions) {
+          if (!test.lastExecution)
+            continue;
+
+          executedTests++;
+          if (test.lastExecution.executionResult === ExecutionResult.passed)
+            passedTests++;
+
+        }
+
+        this.coveragePercent = (executedTests / testsWithExecutions.length) * 100;
+        this.passRatioPercent = (passedTests / executedTests) * 100;
+
+      }
+
+
     });
   }
 
@@ -296,14 +319,14 @@ export class PageExecutionsComponent implements OnInit {
     }
   }
 
-  private getAvailableFilterByTag(filterTag: string): IFilter | null {
+  getAvailableFilterByTag(filterTag: string): IFilter | null {
     for (let filter of this.availableFilters) {
       if (filterTag === filter.filterTag) return filter;
     }
     return null;
   }
 
-  private getUsedFilterByTag(filterTag: string): IFilter | null {
+  getUsedFilterByTag(filterTag: string): IFilter | null {
     for (let filter of this.usedFilters) {
       if (filterTag === filter.filterTag) return filter;
     }
