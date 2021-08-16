@@ -1,15 +1,15 @@
-# ExecutionMatrix
-ExecutionMatrix - Deploy, Host, and view your JUnit 5 tests reports in an external reporting tool
+# ExecutionsViewer
+ExecutionsViewer - Deploy, Host, and view your JUnit 5 tests reports in an external reporting tool
 
 
 # Screenshots
-![image](https://user-images.githubusercontent.com/17680514/129493470-97a15818-3cbd-45e2-b22b-c3209bef8af5.png)
-![image](https://user-images.githubusercontent.com/17680514/129493732-f94661d5-e51d-414c-9f3d-acbc7fa18020.png)
-![image](https://user-images.githubusercontent.com/17680514/129493590-e3a7a71c-5ccb-4872-914c-1a8f5b052139.png)
+![image](https://user-images.githubusercontent.com/17680514/129592198-dbbdd66f-fa89-441c-ab11-31810d84df6f.png)
+![image](https://user-images.githubusercontent.com/17680514/129592240-a89792b9-0e25-44fe-88b0-eb8fb1a9de50.png)
+![image](https://user-images.githubusercontent.com/17680514/129592328-a79a4b61-7828-4c47-89a1-b4a477e82b1d.png)
 ![image](https://user-images.githubusercontent.com/17680514/129417972-5238bb6e-9779-4ce7-8ae1-c49fe0aac617.png)
 ![image](https://user-images.githubusercontent.com/17680514/129444686-f20c6ae7-a708-42f2-8657-032f55c220ae.png)
-![image](https://user-images.githubusercontent.com/17680514/129414108-35a8806b-13ba-45ed-9741-f2e125faef36.png)
-![image](https://user-images.githubusercontent.com/17680514/129414258-55819f21-2616-48b7-9de8-65ef15287c07.png)
+![image](https://user-images.githubusercontent.com/17680514/129592445-21c4aa85-599d-4b70-9a0a-8d38da97e963.png)
+![image](https://user-images.githubusercontent.com/17680514/129592668-fd7f4301-d54c-41cb-aeb2-db9edc2ff6cb.png)
 ![image](https://user-images.githubusercontent.com/17680514/129417942-5a8d3c29-20bc-4325-879a-d66354f11b34.png)
 
 
@@ -23,18 +23,18 @@ ExecutionMatrix - Deploy, Host, and view your JUnit 5 tests reports in an extern
 
 ## Setup the JUnit extension & execution configurations
 
-In order to be able to report from JUnit to the server, you need to use the `ExecutionMatrixExtension` JUnit extension class.
+In order to be able to report from JUnit to the server, you need to use the `ExecutionsViewerExtension` JUnit extension class.
 Add the following annotation above the test class
 
 ```java
-@ExtendWith(ExecutionMatrixExtension.class)
+@ExtendWith(ExecutionsViewerExtension.class)
 ...
 public class MyFakeBlogWebAppTests {
 ```
 
 Next, define the environment variable that will hold the build version.
 This is used to separate the execution reports by build versions later.
-![image](https://user-images.githubusercontent.com/17680514/129416721-186a76ce-223a-4b7e-a1de-7e2295bc9f46.png)
+![image](https://user-images.githubusercontent.com/17680514/129592820-4729f3f2-2550-4513-a2d7-17c81253db08.png)
 
 
 Add `@TestWithVersionEnv("TARGET_BUILD_VERSION")` annotation above the tests class. `TARGET_BUILD_VERSION` can be any name.
@@ -44,7 +44,7 @@ so the new reports will be under the new version.
 
 
 ```java
-@ExtendWith(ExecutionMatrixExtension.class)
+@ExtendWith(ExecutionsViewerExtension.class)
 @TestWithVersionEnv("TARGET_BUILD_VERSION")
 ...
 public class MyFakeBlogWebAppTests {
@@ -56,22 +56,23 @@ If you use IntelliJ, you can configure the `TARGET_BUILD_VERSION` environment va
 
 Next, you must add `@Tag` to the test class & tests.
 The tag is mapped to the feature that shown here:
-![image](https://user-images.githubusercontent.com/17680514/129439072-bef930db-17f2-4976-bd76-d987dd2550ed.png)
+![image](https://user-images.githubusercontent.com/17680514/129593730-0148b13d-f1a7-4a17-9226-e24fb4e1458a.png)
+
 
 You will also be able to select only executions that are related to the `@Tag`/Feature
-![image](https://user-images.githubusercontent.com/17680514/129415665-9ab0e8e0-8b86-4562-9761-1c45b334802c.png)
+![image](https://user-images.githubusercontent.com/17680514/129593327-0eca97bd-bfd0-4c91-bcd3-c863a7755e88.png)
 
 
 To add @Tag, you need to add under each test `@Tag` annotation with feature name inside.
 For example:
-![image](https://user-images.githubusercontent.com/17680514/129415798-de45a64c-1e3f-48d1-927a-66c7c02ff073.png)
+![image](https://user-images.githubusercontent.com/17680514/129593826-424f6b46-9441-4db7-bf82-09393afe07ca.png)
 
 
 Next, It is highly recommended to add `@DisplayName` annotation to the class and tests.
 The value in the `@DisplayName` is a simplified name that is easier to read.
 The `@DisplayName` is reflected here:
-![image](https://user-images.githubusercontent.com/17680514/129417180-eb3b67a5-980d-48d6-83bb-ee08b7fc5fea.png)
-![image](https://user-images.githubusercontent.com/17680514/129417324-10f37ca2-6fcf-4e43-8d93-8d16522bf1a2.png)
+![image](https://user-images.githubusercontent.com/17680514/129593909-7dc9faef-6ad3-4536-8ea7-c30a84bcd5be.png)
+![image](https://user-images.githubusercontent.com/17680514/129593983-25ff0500-f5de-4839-89d9-e3be4cc404c7.png)
 
 
 ### Full example of test class
@@ -80,7 +81,7 @@ The `@DisplayName` is reflected here:
 ```java
 package tests;
 
-import executionmatrix.junit5.extension.ExecutionMatrixExtension;
+import executionmatrix.junit5.extension.ExecutionsViewerExtension;
 import executionmatrix.junit5.extension.annotations.TestWithVersionEnv;
 import app.MyFakeBlogWebApp;
 import org.junit.jupiter.api.*;
@@ -93,7 +94,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-@ExtendWith(ExecutionMatrixExtension.class)
+@ExtendWith(ExecutionsViewerExtension.class)
 @TestWithVersionEnv("TARGET_BUILD_VERSION")
 @DisplayName("Sanity Tests")
 @Tag("BasicUserFunctionality")
@@ -218,7 +219,7 @@ public class DynamicTestsExample {
 package tests;
 
 import app.MyFakeBlogWebApp;
-import executionmatrix.junit5.extension.ExecutionMatrixExtension;
+import executionmatrix.junit5.extension.ExecutionsViewerExtension;
 import executionmatrix.junit5.extension.annotations.TestWithVersionEnv;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -228,7 +229,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(ExecutionMatrixExtension.class)
+@ExtendWith(ExecutionsViewerExtension.class)
 @DisplayName("Basic Tests Example")
 @Tag("Account")
 @TestWithVersionEnv("TARGET_BUILD_VERSION")
@@ -421,7 +422,7 @@ public class MyFakeBlogWebApp {
 ```java
 package tests;
 
-import executionmatrix.junit5.extension.ExecutionMatrixExtension;
+import executionmatrix.junit5.extension.ExecutionsViewerExtension;
 import executionmatrix.junit5.extension.annotations.TestWithVersionEnv;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -431,7 +432,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-@ExtendWith(ExecutionMatrixExtension.class)
+@ExtendWith(ExecutionsViewerExtension.class)
 @DisplayName("Result Kinds Example")
 @Tag("BasicFeature")
 @TestWithVersionEnv("TARGET_BUILD_VERSION")
@@ -467,7 +468,7 @@ public class ResultKindsExample {
 ```
 
 This will render into:
-![image](https://user-images.githubusercontent.com/17680514/129449813-f2f74694-0a4b-4233-9adb-e873ff8af117.png)
+![image](https://user-images.githubusercontent.com/17680514/129593437-5ca97a2d-f894-4ab3-913c-73e643673327.png)
 
 
 
