@@ -21,7 +21,7 @@ export class ApiServiceService {
   getTestsSummary(
     versionId?: number,
     testClassId?: number,
-    requirementId?: number
+    featureId?: number
   ): Observable<TestSummary[]> {
     let parms: any = {};
 
@@ -29,7 +29,7 @@ export class ApiServiceService {
 
     if (testClassId) parms.testClassId = testClassId;
 
-    if (requirementId) parms.requirementId = requirementId;
+    if (featureId) parms.featureId = featureId;
 
     return this.http
       .get<TestSummary[]>(
