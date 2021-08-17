@@ -4,6 +4,8 @@ import executionmatrix.junit5.extension.internal.ExtensionContextInfo;
 import executionmatrix.junit5.extension.internal.helpers.Utils;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestTag;
+import org.opentest4j.AssertionFailedError;
+import org.opentest4j.MultipleFailuresError;
 
 import java.util.*;
 
@@ -17,6 +19,7 @@ public class PostExecutionDTO {
     private ExecutionResult result;
     private String output;
     private List<PostExecutionDTO> childExecutions;
+    private List<FailureInExecutionDTO> failures;
 
     private transient PostExecutionDTO parent;
 
@@ -37,9 +40,40 @@ public class PostExecutionDTO {
             if (contextInfo.getConsoleOutput() != null)
                 output = contextInfo.getConsoleOutput();
 
+
             if (contextInfo.getException() != null) {
+
                 Throwable exception = contextInfo.getException();
-                if (exception instanceof AssertionError)
+
+                if (output == null)
+                    output = "";
+
+                output += exception.getClass().getName();
+                if (exception.getMessage() != null)
+                    output += ":" + EOL + "\t" + exception.getMessage();
+
+                output += EOL;
+
+                if (exception instanceof MultipleFailuresError) {
+                    MultipleFailuresError multiException = (MultipleFailuresError)exception;
+
+                    result = ExecutionResult.Failed;
+
+                    if (multiException.hasFailures()) {
+                        List<Throwable> failuresExs = multiException.getFailures();
+                        this.failures = new ArrayList<>();
+                        for (Throwable failureEx : failuresExs) {
+                            this.failures.add(new FailureInExecutionDTO(failureEx));
+                            if (!(failureEx instanceof AssertionError))
+                                this.result = ExecutionResult.Fatal;
+                        }
+                    }
+
+                } else if (exception instanceof AssertionFailedError) {
+                    this.failures = new ArrayList<>();
+                    this.failures.add(new FailureInExecutionDTO(exception));
+                    result = ExecutionResult.Failed;
+                } else if (exception instanceof AssertionError)
                     result = ExecutionResult.Failed;
                 else
                     result = ExecutionResult.Fatal;
@@ -59,14 +93,7 @@ public class PostExecutionDTO {
                     }
                 }
 
-                if (output == null)
-                    output = "";
 
-                output += exception.getClass().getName();
-                if (exception.getMessage() != null)
-                    output += ":" + EOL + "\t" + exception.getMessage();
-
-                output += EOL;
 
             } else {
                 result = ExecutionResult.Passed;
@@ -182,5 +209,13 @@ public class PostExecutionDTO {
 
     public void setChildExecutions(List<PostExecutionDTO> childExecutions) {
         this.childExecutions = childExecutions;
+    }
+
+    public List<FailureInExecutionDTO> getFailures() {
+        return failures;
+    }
+
+    public void setFailures(List<FailureInExecutionDTO> failures) {
+        this.failures = failures;
     }
 }

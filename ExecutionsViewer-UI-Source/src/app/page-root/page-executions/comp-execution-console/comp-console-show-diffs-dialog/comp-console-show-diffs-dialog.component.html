@@ -1,0 +1,13 @@
+<div class="main-content-container">
+  <p class="dialog-title">Expected vs Actual</p>
+  <td-ngx-text-diff
+    [left]="data.expected ? data.expected : ''"
+    [right]="data.actual ? data.actual : ''"
+    [showBtnToolbar]="true"
+    (compareResults)="onCompareResults($event)">
+  </td-ngx-text-diff>
+</div>
+
+<div class="bottom-content-container">
+  <button (click)="onCloseDialog()" mat-raised-button color="primary" class="close-button">Close</button>
+</div>

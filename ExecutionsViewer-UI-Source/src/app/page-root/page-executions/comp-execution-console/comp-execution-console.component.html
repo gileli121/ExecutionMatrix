@@ -13,14 +13,56 @@
       }">
     <div style="position: relative; margin-right: 10px">
       <div *ngFor="let execution of testExecutions; let i = index">
-        <div>
-          <div *ngIf="i > 0">
-            <br>
-            <mat-divider ></mat-divider>
-          </div>
-          <div class="console-child-test-title">Test: {{execution.testNameView}}</div>
+        <div *ngIf="i > 0">
+          <br>
+          <mat-divider></mat-divider>
+          <br>
         </div>
-        <div>{{execution.executionOutput}}</div>
+
+
+        <div class="console-child-test-title">Test: {{execution.testNameView}}</div>
+
+
+        <div class="execution-content-container" [ngClass]="{
+        'execution-content-container-passed':
+          execution.executionResult === ExecutionResult.passed,
+        'execution-content-container-failed':
+          execution.executionResult === ExecutionResult.failed,
+        'execution-content-container-fatal':
+          execution.executionResult === ExecutionResult.fatal
+      }">
+          <div *ngIf="execution.failures.length > 0">
+            <div class="console-title console-failures-title">Failures</div>
+            <ol *ngFor="let failure of execution.failures; let i = index" class="failure-item-container">
+              <li value="{{i+1}}" class="failure-message">
+                {{failure.failureMessage}}
+                <button *ngIf="failure.expected || failure.actual" mat-icon-button (click)="openFailuresInDialog(failure)">
+                  <mat-icon>open_in_new</mat-icon>
+                </button>
+                <div *ngIf="failure.haveExActFields" class="failure-diffs-container">
+                  <div class="failure-expected-actual-title failure-expected-title">Expected</div>
+                  <button (click)="onCopyClipBoardClick(failure?.expected)" mat-icon-button class="failure-diff-button">
+                    <i class="far fa-copy"></i>
+                  </button>
+                  <textarea class="failure-expected-or-actual-content">{{failure?.expected}}</textarea>
+                  <div class="failure-expected-actual-title failure-actual-title">Actual</div>
+                  <button (click)="onCopyClipBoardClick(failure?.actual)" mat-icon-button class="failure-diff-button">
+                    <i class="far fa-copy"></i>
+                  </button>
+                  <textarea class="failure-expected-or-actual-content">{{failure?.actual}}</textarea>
+                </div>
+              </li>
+
+
+            </ol>
+
+            <div class="console-title" style="display: inline-block">Console Output</div>
+
+          </div>
+
+          <div>{{execution.executionOutput}}</div>
+
+        </div>
       </div>
     </div>
   </div>

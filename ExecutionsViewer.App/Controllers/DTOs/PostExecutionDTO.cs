@@ -24,6 +24,9 @@ namespace ExecutionsViewer.App.Controllers.DTOs
         [Required]
         public ExecutionResult Result { get; set; }
         public string Output { get; set; }
+
+        public ICollection<FailuresInExecutionDTO> Failures { get; set; }
+
         public ICollection<PostExecutionDTO> ChildExecutions { get; set; }
         public int ExecutionId { get; set; }
 

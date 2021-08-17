@@ -28,29 +28,13 @@ namespace ExecutionsViewer.App.Database.Tables
 
         public ICollection<Execution> ChildExecutions { get; set; }
 
+        public ICollection<Failure> Failures { get; set; }
+
         public Execution()
         {
         }
 
         // Constructor that used for parent execution
-        public Execution(Test test, ExecutionResult executionResult, Version version,
-            ICollection<Feature> features)
-        {
-            this.Test = test;
-            this.ExecutionResult = executionResult;
-            this.ExecutionDate = DateTime.Now;
-            this.Version = version;
-        }
-
-
-        // Constructor that used for child execution
-        public Execution(Test test, ExecutionResult executionResult, string executionOutput = null)
-        {
-            this.Test = test;
-            this.ExecutionResult = executionResult;
-            this.ExecutionOutput = executionOutput;
-            this.ExecutionDate = DateTime.Now;
-        }
 
 
         public Execution(Test test, PostExecutionDTO executionDto, Version version = null)
@@ -60,6 +44,13 @@ namespace ExecutionsViewer.App.Database.Tables
             this.ExecutionOutput = executionDto.Output;
             this.ExecutionDate = DateTime.Now;
             this.Version = version;
+            if (executionDto.Failures?.Count > 0)
+            {
+                this.Failures = new List<Failure>();
+                foreach (var differenceInExecutionDto in executionDto.Failures)
+                    this.Failures.Add(new Failure(differenceInExecutionDto));
+            }
+
             if (executionDto.ChildExecutions != null && test.ChildTests != null)
             {
                 ChildExecutions = new List<Execution>();

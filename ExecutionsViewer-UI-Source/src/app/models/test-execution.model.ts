@@ -1,3 +1,5 @@
+import {FailuresInExecution} from "./failures-in-execution.model";
+
 export class TestExecution {
   public testMethodName: string;
   public testDisplayName: string;
@@ -5,6 +7,7 @@ export class TestExecution {
   public executionResult: number;
   public executionDate: Date;
   public childExecutions: TestExecution[] = [];
+  public failures: FailuresInExecution[] = [];
   public isExpanded: boolean = true;
 
   constructor(testExecution: TestExecution) {
@@ -16,6 +19,11 @@ export class TestExecution {
     testExecution.childExecutions?.forEach((execution) => {
       this.childExecutions.push(new TestExecution(execution));
     });
+
+    testExecution.failures?.forEach(failure => {
+      this.failures.push(new FailuresInExecution(failure));
+    })
+
   }
 
   get testNameView(): string {

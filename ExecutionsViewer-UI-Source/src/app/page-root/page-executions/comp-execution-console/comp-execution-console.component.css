@@ -49,11 +49,94 @@
   background-color: rgba(234, 143, 136, 0.3);
 }
 
-.console-section-divider {
-  margin-top: 10px;
-}
+
 .console-child-test-title {
   font-weight: bold;
   font-size: 14px;
+  color: #2e2e60;
+  text-decoration: underline;
+  /*display: inline-block;*/
+  /*margin-right: 5px;*/
+}
+
+.console-title {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-weight: bold
+}
+
+.console-failures-title {
+
+
+  color: red;
+
+}
+
+.execution-content-container {
+  margin-left: 10px;
+  padding-left: 5px;
+  margin-top: 5px;
+  padding-bottom: 15px;
+  margin-bottom: 8px;
+  border-left: solid;
+  border-width: 3px;
+  border-color: rgba(128, 128, 128, 0.3);
+}
+
+.execution-content-container-passed {
+  border-color: rgba(81, 227, 65, 0.3);
+}
+
+.execution-content-container-failed {
+  border-color: rgba(243, 139, 35, 0.3);
+}
+
+.execution-content-container-fatal {
+  border-color: rgba(227, 79, 65, 0.3);
+}
+
+
+
+.failure-item-container {
+
+}
+
+.failure-message {
+  font-weight: bold;
+}
+
+.failure-diffs-container {
+  border-left: solid;
+  padding-left: 5px;
+  border-width: 2px;
+  margin-bottom: 5px;
+  border-color: rgba(243, 139, 35, 0.3);
+}
+
+.failure-expected-actual-title {
+  font-weight: bold;
+  display: inline-block;
+}
+.failure-expected-title {
+
   color: blue;
+
+}
+
+.failure-actual-title {
+  color: red;
+}
+
+.failure-expected-or-actual-content {
+  width: 95%;
+  height: 30px;
+  min-height: 30px;
+  background-color: rgba(238, 219, 185, 0.3);
+  display: block;
+  margin-bottom: 5px;
+}
+
+.failure-diff-button {
+  margin-left: 5px;
+  margin-bottom: 2px;
 }

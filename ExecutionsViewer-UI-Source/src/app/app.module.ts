@@ -30,6 +30,11 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatCardModule} from "@angular/material/card";
 import {MatMenuModule} from "@angular/material/menu";
 import {MatDividerModule} from "@angular/material/divider";
+import { CompConsoleShowDiffsDialogComponent } from './page-root/page-executions/comp-execution-console/comp-console-show-diffs-dialog/comp-console-show-diffs-dialog.component';
+import {MatDialogModule} from "@angular/material/dialog";
+import {NgxTextDiffModule} from "ngx-text-diff";
+import {ScrollingModule} from "@angular/cdk/scrolling";
+
 
 @NgModule({
   declarations: [
@@ -43,31 +48,35 @@ import {MatDividerModule} from "@angular/material/divider";
     CompExecutionConsoleComponent,
     PageFeaturesComponent,
     CompPageMessageComponent,
-    CompPercentageCircleComponent
+    CompPercentageCircleComponent,
+    CompConsoleShowDiffsDialogComponent
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        HttpClientModule,
-        FormsModule,
-        ReactiveFormsModule,
-        ToastrModule.forRoot({
-            positionClass: 'toast-bottom-right',
-        }),
-        BsDropdownModule.forRoot(),
-        CollapseModule.forRoot(),
-        NgxResizableModule,
-        MatSelectModule,
-        MatTableModule,
-        NgCircleProgressModule,
-        MatIconModule,
-        MatToolbarModule,
-        MatButtonModule,
-        MatCardModule,
-        MatMenuModule,
-        MatDividerModule,
-    ],
+  imports: [
+    BrowserModule,
+    ScrollingModule ,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right',
+    }),
+    BsDropdownModule.forRoot(),
+    CollapseModule.forRoot(),
+    NgxResizableModule,
+    MatSelectModule,
+    MatTableModule,
+    NgCircleProgressModule,
+    MatIconModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatCardModule,
+    MatMenuModule,
+    MatDividerModule,
+    MatDialogModule,
+    NgxTextDiffModule
+  ],
   providers: [
     HttpClient,
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

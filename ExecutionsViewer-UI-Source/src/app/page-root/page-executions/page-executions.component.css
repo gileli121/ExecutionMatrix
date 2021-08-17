@@ -141,13 +141,13 @@
 .test-result-console-container {
   /*background-color: grey;*/
   width: 100%;
-  height: calc(40% - 45px);
+  height: calc(45% - 20px);
 }
 
 .test-result-tree-container {
   /*background-color: greenyellow;*/
   width: 100%;
-  height: 60%;
+  height: 55%;
   padding-top: 15px;
   overflow: auto;
 }

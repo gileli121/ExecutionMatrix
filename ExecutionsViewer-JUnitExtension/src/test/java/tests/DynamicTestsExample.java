@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 @ExtendWith(ExecutionsViewerExtension.class)
-@TestWithVersion("v0.0.1")
+@TestWithVersion("v2")
 @DisplayName("Sanity Tests")
 @Tag("BasicUserFunctionality")
 public class DynamicTestsExample {

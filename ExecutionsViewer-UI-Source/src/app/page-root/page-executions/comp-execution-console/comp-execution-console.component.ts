@@ -2,7 +2,11 @@ import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core'
 import {TestExecution} from "../../../models/test-execution.model";
 import {ExecutionResult} from "../../../models/execution-result";
 import {ExecutionInTest} from "../../../models/execution-in-test.model";
-
+import {FailuresInExecution} from "../../../models/failures-in-execution.model";
+import {MatDialog} from "@angular/material/dialog";
+import {CompConsoleShowDiffsDialogComponent} from "./comp-console-show-diffs-dialog/comp-console-show-diffs-dialog.component";
+import {ToastrService} from "ngx-toastr";
+import { Clipboard } from '@angular/cdk/clipboard';
 
 @Component({
   selector: 'app-comp-execution-console',
@@ -18,7 +22,11 @@ export class CompExecutionConsoleComponent implements OnInit, OnChanges {
 
   ExecutionResult = ExecutionResult;
 
-  constructor() {
+  constructor(
+    private dialog: MatDialog,
+    private toastr: ToastrService,
+    private clipboard: Clipboard
+  ) {
   }
 
   ngOnInit(): void {
@@ -60,4 +68,25 @@ export class CompExecutionConsoleComponent implements OnInit, OnChanges {
   }
 
 
+  openFailuresInDialog(failure: FailuresInExecution) {
+    const dialogRef = this.dialog.open(CompConsoleShowDiffsDialogComponent,{
+      data:failure,
+      height: '80%',
+      width: '80%'
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+
+      }
+    });
+  }
+
+  onCopyClipBoardClick(valueToPut: string | undefined) {
+    if (!valueToPut) return;
+    this.clipboard.copy(valueToPut);
+
+    this.toastr.info('Copied to clipboard');
+
+  }
 }
