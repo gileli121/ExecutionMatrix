@@ -63,19 +63,12 @@ namespace ExecutionsViewer.App.Database.Tables
                     this.Failures.Add(new Failure(differenceInExecutionDto));
             }
 
-            if (executionDto.ChildExecutions != null && test.ChildTests != null)
+            if (executionDto.ChildExecutions != null)
             {
                 ChildExecutions = new List<ChildExecution>();
                 foreach (var executionDtoChildExecution in executionDto.ChildExecutions)
                 {
-                    foreach (var testChildTest in test.ChildTests)
-                    {
-                        if (testChildTest.TestMethodName == executionDtoChildExecution.TestMethodName)
-                        {
-                            ChildExecutions.Add(new ChildExecution(executionDtoChildExecution));
-                            break;
-                        }
-                    }
+                    ChildExecutions.Add(new ChildExecution(executionDtoChildExecution));
                 }
             }
         }
