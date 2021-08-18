@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ExecutionsViewer.App.Controllers.DTOs;
 using ExecutionsViewer.App.Database.Extensions;
+using ExecutionsViewer.App.Database.Tables.VirtualTables;
 using ExecutionsViewer.App.Database.Types;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
