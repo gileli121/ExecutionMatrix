@@ -4,7 +4,7 @@ using Version = ExecutionsViewer.App.Database.Tables.Version;
 
 namespace ExecutionsViewer.App.Database
 {
-    public class ExecutionsViewerDbContext : DbContext
+    public class ExecutionsViewerDbContext : DbContext 
     {
         // DbContextOptions<ExecutionsViewerDbContext> contextOptions;
 
@@ -20,6 +20,12 @@ namespace ExecutionsViewer.App.Database
 
         public ExecutionsViewerDbContext(DbContextOptions<ExecutionsViewerDbContext> contextOptions) : base(contextOptions)
         {
+        }
+
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.ApplyConfiguration(new ExecutionConfiguration());
         }
     }
 }

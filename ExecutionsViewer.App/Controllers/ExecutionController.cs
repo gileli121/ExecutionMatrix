@@ -93,7 +93,6 @@ namespace ExecutionsViewer.App.Controllers
             var execution = db.Executions
                 .Include(e => e.ChildExecutions)
                 .Include(e => e.Test)
-                .Include(e => e.Failures)
                 .AsEnumerable()
                 .Where(e => e.Id == executionId)
                 .ToList()

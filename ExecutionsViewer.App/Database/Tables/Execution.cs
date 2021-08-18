@@ -4,10 +4,22 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using ExecutionsViewer.App.Controllers.DTOs;
+using ExecutionsViewer.App.Database.Extensions;
 using ExecutionsViewer.App.Database.Types;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ExecutionsViewer.App.Database.Tables
 {
+    public class ExecutionConfiguration : IEntityTypeConfiguration<Execution>
+    {
+        public void Configure(EntityTypeBuilder<Execution> builder)
+        {
+            // This Converter will perform the conversion to and from Json to the desired type
+            builder.Property(e => e.Failures).HasJsonConversion();
+        }
+    }
+
     public sealed class Execution
     {
         public int Id { get; set; }
@@ -28,7 +40,7 @@ namespace ExecutionsViewer.App.Database.Tables
 
         public ICollection<Execution> ChildExecutions { get; set; }
 
-        public ICollection<Failure> Failures { get; set; }
+        public List<Failure> Failures { get; set; }
 
         public Execution()
         {

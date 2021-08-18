@@ -149,6 +149,8 @@ namespace ExecutionsViewer.App
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 
+          
+
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<ExecutionsViewerDbContext>();
