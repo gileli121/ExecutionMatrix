@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ExecutionsViewer.App.Database.Tables;
+using ExecutionsViewer.App.Database.Tables.VirtualTables;
 using ExecutionsViewer.App.Database.Types;
 
 namespace ExecutionsViewer.App.Controllers.DTOs

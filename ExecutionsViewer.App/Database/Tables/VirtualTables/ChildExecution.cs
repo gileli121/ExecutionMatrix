@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 using ExecutionsViewer.App.Controllers.DTOs;
 using ExecutionsViewer.App.Database.Types;
 
-namespace ExecutionsViewer.App.Database.Tables
+namespace ExecutionsViewer.App.Database.Tables.VirtualTables
 {
     public class ChildExecution
     {

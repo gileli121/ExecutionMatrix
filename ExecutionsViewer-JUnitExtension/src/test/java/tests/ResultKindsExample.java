@@ -1,6 +1,7 @@
 package tests;
 
 import executionmatrix.junit5.extension.ExecutionsViewerExtension;
+import executionmatrix.junit5.extension.annotations.TestWithVersion;
 import executionmatrix.junit5.extension.annotations.TestWithVersionEnv;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @ExtendWith(ExecutionsViewerExtension.class)
 @DisplayName("Result Kinds Example")
 @Tag("BasicFeature")
-@TestWithVersionEnv("TARGET_BUILD_VERSION")
+@TestWithVersion("v1")
 public class ResultKindsExample {
 
     @Test

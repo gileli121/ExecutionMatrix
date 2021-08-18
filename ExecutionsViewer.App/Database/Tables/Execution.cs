@@ -27,7 +27,7 @@ namespace ExecutionsViewer.App.Database.Tables
         public int Id { get; set; }
 
         public Version Version { get; set; }
-        public int VersionId { get; set; }
+        public int? VersionId { get; set; }
 
         public Test Test { get; set; }
         public int TestId { get; set; }

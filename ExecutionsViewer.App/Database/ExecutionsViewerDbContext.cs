@@ -26,6 +26,7 @@ namespace ExecutionsViewer.App.Database
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new ExecutionConfiguration());
+            builder.ApplyConfiguration(new TestConfiguration());
         }
     }
 }

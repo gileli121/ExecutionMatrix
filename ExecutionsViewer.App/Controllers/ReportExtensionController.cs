@@ -31,13 +31,13 @@ namespace ExecutionsViewer.App.Controllers
 
 
             // Create the test in the test class if not exists
-            var tests = db.Tests
-                .Include(t => t.Features)
-                .Include(t => t.ChildTests)
-                .Include(t => t.TestOwner)
-                .AsEnumerable()
-                .Where(t => t.TestId == null && t.TestMethodName == body.TestMethodName)
-                .ToList();
+            // var tests = db.Tests
+            //     .Include(t => t.Features)
+            //     // .Include(t => t.ChildTests)
+            //     // .Include(t => t.TestOwner)
+            //     .AsEnumerable()
+            //     .Where(t =>t.TestMethodName == body.TestMethodName)
+            //     .ToList();
 
 
             var testClass = await db.TestClasses.Where(c =>
@@ -61,6 +61,11 @@ namespace ExecutionsViewer.App.Controllers
             }
             else
             {
+                var tests = await db.Tests.Where(t =>
+                        (t.TestClass == null || (t.TestClass.ClassName == body.TestClass.ClassName &&
+                                                 t.TestClass.PackageName == body.TestClass.PackageName)))
+                    .ToListAsync();
+
                 test = tests.FirstOrDefault(testCheck =>
                     testCheck.TestClass != null && testCheck.IsMatchToExecution(body));
                 if (test == null)
@@ -70,6 +75,12 @@ namespace ExecutionsViewer.App.Controllers
                     db.Tests.Add(test);
                 }
             }
+
+
+
+
+
+
 
 
             if (body.FeatureNames == null || body.FeatureNames.Count == 0)

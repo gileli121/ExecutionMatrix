@@ -4,20 +4,31 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using ExecutionsViewer.App.Controllers.DTOs;
+using ExecutionsViewer.App.Database.Extensions;
+using ExecutionsViewer.App.Database.Tables.VirtualTables;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ExecutionsViewer.App.Database.Tables
 {
+    public class TestConfiguration : IEntityTypeConfiguration<Test>
+    {
+        public void Configure(EntityTypeBuilder<Test> builder)
+        {
+            // This Converter will perform the conversion to and from Json to the desired type
+            builder.Property(t => t.ChildTests).HasJsonConversion();
+        }
+    }
+
     public class Test
     {
         public int Id { get; set; }
 
-        public TestClass? TestClass { get; set; }
-        public int? TestClassId { get; set; }
+        public TestClass TestClass { get; set; }
+        public int TestClassId { get; set; }
 
-        public ICollection<Test> ChildTests { get; set; }
 
-        public Test TestOwner { get; set; }
-        public int? TestId { get; set; }
+        public List<ChildTest> ChildTests { get; set; }
 
         public Version FirstVersion { get; set; }
         public int? FirstVersionId { get; set; }
@@ -42,16 +53,13 @@ namespace ExecutionsViewer.App.Database.Tables
             this.TestDisplayName = executionDto.TestDisplayName;
             if (executionDto.ChildExecutions is {Count: > 0})
             {
-                ChildTests = new List<Test>();
+                ChildTests = new List<ChildTest>();
                 foreach (var executionDtoChildExecution in executionDto.ChildExecutions)
                 {
-                    ChildTests.Add(new Test(executionDtoChildExecution));
+                    ChildTests.Add(new ChildTest(executionDtoChildExecution));
                 }
             }
         }
-
-
-
 
         public bool IsMatchToExecution(PostExecutionDTO executionDto)
         {
@@ -84,44 +92,46 @@ namespace ExecutionsViewer.App.Database.Tables
                 return false;
 
 
-            var validCount = 0;
-            foreach (var childExecutionDto in executionDto.ChildExecutions)
-            {
-                foreach (var childTest in ChildTests)
-                {
-                    if (TestMethodName != null && childTest.TestMethodName != null)
-                    {
-                        if (childExecutionDto.TestMethodName == childTest.TestMethodName)
-                        {
-                            if (childTest.IsMatchToExecution(childExecutionDto))
-                                validCount++;
-                            else
-                                return false;
+            return true;
 
-                            break;
-                        }
-                    }
-                    else if (TestDisplayName != null && childTest.TestDisplayName != null)
-                    {
-                        if (childExecutionDto.TestDisplayName == childTest.TestDisplayName)
-                        {
-                            if (childTest.IsMatchToExecution(childExecutionDto))
-                                validCount++;
-                            else
-                                return false;
-
-                            break;
-                        }
-                    }
-                    else if (TestMethodName == null && TestDisplayName == null)
-                    {
-                        throw new Exception("Invalid payload");
-                    }
-
-                }
-            }
-
-            return validCount == ChildTests.Count;
+            // var validCount = 0;
+            // foreach (var childExecutionDto in executionDto.ChildExecutions)
+            // {
+            //     foreach (var childTest in ChildTests)
+            //     {
+            //         if (TestMethodName != null && childTest.TestMethodName != null)
+            //         {
+            //             if (childExecutionDto.TestMethodName == childTest.TestMethodName)
+            //             {
+            //                 if (childTest.IsMatchToExecution(childExecutionDto))
+            //                     validCount++;
+            //                 else
+            //                     return false;
+            //
+            //                 break;
+            //             }
+            //         }
+            //         else if (TestDisplayName != null && childTest.TestDisplayName != null)
+            //         {
+            //             if (childExecutionDto.TestDisplayName == childTest.TestDisplayName)
+            //             {
+            //                 if (childTest.IsMatchToExecution(childExecutionDto))
+            //                     validCount++;
+            //                 else
+            //                     return false;
+            //
+            //                 break;
+            //             }
+            //         }
+            //         else if (TestMethodName == null && TestDisplayName == null)
+            //         {
+            //             throw new Exception("Invalid payload");
+            //         }
+            //
+            //     }
+            // }
+            //
+            // return validCount == ChildTests.Count;
         }
     }
 }

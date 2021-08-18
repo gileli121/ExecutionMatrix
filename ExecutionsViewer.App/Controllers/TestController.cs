@@ -32,7 +32,7 @@ namespace ExecutionsViewer.App.Controllers
             [FromQuery] int? testClassId,
             [FromQuery] int? featureId)
         {
-            var testsQ = db.Tests.Where(t => t.TestOwner == null);
+            var testsQ = db.Tests.AsQueryable();
 
             if (versionId != null)
                 testsQ = db.Tests.Where(t => versionId >= t.FirstVersionId);

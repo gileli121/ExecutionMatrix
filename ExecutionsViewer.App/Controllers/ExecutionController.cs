@@ -46,9 +46,6 @@ namespace ExecutionsViewer.App.Controllers
 
 
             var query = db.Tests
-                .Where(t => t.TestId == null)
-                .Include(t => t.ChildTests)
-                .Include(t => t.TestOwner)
                 .Include(t => t.Executions)
                 .AsQueryable();
 
