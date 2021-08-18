@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ExecutionsViewer.App.Controllers.DTOs;
+﻿using ExecutionsViewer.App.Controllers.DTOs;
 
-namespace ExecutionsViewer.App.Database.Tables
+namespace ExecutionsViewer.App.Database.Tables.VirtualTables
 {
     public class Failure
     {
