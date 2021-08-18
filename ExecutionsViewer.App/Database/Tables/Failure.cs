@@ -8,10 +8,6 @@ namespace ExecutionsViewer.App.Database.Tables
 {
     public class Failure
     {
-        public int Id { get; set; }
-
-        public Execution Execution { get; set; }
-        public int ExecutionId { get; set; }
 
         public string FailureMessage { get; set; }
 
