@@ -17,16 +17,16 @@ namespace ExecutionsViewer.App.Database.Tables
         {
             // This Converter will perform the conversion to and from Json to the desired type
             builder.Property(e => e.Failures).HasJsonConversion();
+            builder.Property(e => e.ChildExecutions).HasJsonConversion();
         }
     }
 
     public sealed class Execution
     {
         public int Id { get; set; }
-        public int? ExecutionId { get; set; }
 
         public Version Version { get; set; }
-        public int? VersionId { get; set; }
+        public int VersionId { get; set; }
 
         public Test Test { get; set; }
         public int TestId { get; set; }
@@ -34,11 +34,10 @@ namespace ExecutionsViewer.App.Database.Tables
         public string ExecutionOutput { get; set; }
 
         [Required] public ExecutionResult ExecutionResult { get; set; }
-        public DateTime? ExecutionDate { get; set; }
+        public DateTime ExecutionDate { get; set; }
 
-        public Execution ExecutionOwner { get; set; }
 
-        public ICollection<Execution> ChildExecutions { get; set; }
+        public List<ChildExecution> ChildExecutions { get; set; }
 
         public List<Failure> Failures { get; set; }
 
@@ -65,14 +64,14 @@ namespace ExecutionsViewer.App.Database.Tables
 
             if (executionDto.ChildExecutions != null && test.ChildTests != null)
             {
-                ChildExecutions = new List<Execution>();
+                ChildExecutions = new List<ChildExecution>();
                 foreach (var executionDtoChildExecution in executionDto.ChildExecutions)
                 {
                     foreach (var testChildTest in test.ChildTests)
                     {
                         if (testChildTest.TestMethodName == executionDtoChildExecution.TestMethodName)
                         {
-                            ChildExecutions.Add(new Execution(testChildTest, executionDtoChildExecution));
+                            ChildExecutions.Add(new ChildExecution(executionDtoChildExecution));
                             break;
                         }
                     }

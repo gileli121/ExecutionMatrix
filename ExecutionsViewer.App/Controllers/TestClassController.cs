@@ -62,7 +62,7 @@ namespace ExecutionsViewer.App.Controllers
             if (versionId != null)
                 executionsQ = executionsQ.Where(e => e.VersionId == versionId);
 
-            var executions = await executionsQ.Where(e => e.ExecutionId == null)
+            var executions = await executionsQ
                 .OrderByDescending(e => e.ExecutionDate)
                 .ToListAsync();
 

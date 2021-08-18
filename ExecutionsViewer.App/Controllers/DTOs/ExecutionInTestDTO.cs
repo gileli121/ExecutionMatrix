@@ -26,6 +26,19 @@ namespace ExecutionsViewer.App.Controllers.DTOs
 
         }
 
+        public ExecutionInTestDTO(ChildExecution childExecution)
+        {
+            this.ExecutionOutput = childExecution.ExecutionOutput;
+            this.ExecutionResult = childExecution.ExecutionResult;
+            if (childExecution.ChildExecutions != null)
+            {
+                this.ChildExecutions = new List<ExecutionInTestDTO>();
+                foreach (var childExecutionChildExecution in childExecution.ChildExecutions)
+                    this.ChildExecutions.Add(new ExecutionInTestDTO(childExecutionChildExecution));
+                
+            }
+        }
+
         public ExecutionInTestDTO(Execution execution)
         {
             this.Id = execution.Id;

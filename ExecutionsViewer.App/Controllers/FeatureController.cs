@@ -62,7 +62,6 @@ namespace ExecutionsViewer.App.Controllers
                 .ToListAsync();
 
             var executionsInVersion = await db.Executions
-                .Where(e => e.ExecutionId == null)
                 .Where(e => e.VersionId == versionId)
                 .OrderByDescending(e => e.ExecutionDate)
                 .ToListAsync();

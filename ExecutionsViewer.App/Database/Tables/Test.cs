@@ -51,30 +51,6 @@ namespace ExecutionsViewer.App.Database.Tables
         }
 
 
-        public void AddExecution(Execution execution)
-        {
-
-            Executions ??= new List<Execution>();
-
-            Executions.Add(execution);
-            if (execution.ChildExecutions == null)
-                return;
-
-            if (ChildTests == null)
-                return;
-
-            foreach (var childTest in ChildTests)
-            {
-                foreach (var executionChildExecution in execution.ChildExecutions)
-                {
-                    if (childTest.TestMethodName == executionChildExecution.Test.TestMethodName)
-                    {
-                        childTest.AddExecution(executionChildExecution);
-                        break;
-                    }
-                }
-            }
-        }
 
 
         public bool IsMatchToExecution(PostExecutionDTO executionDto)

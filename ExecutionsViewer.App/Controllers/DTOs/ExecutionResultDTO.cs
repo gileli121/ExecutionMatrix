@@ -17,6 +17,31 @@ namespace ExecutionsViewer.App.Controllers.DTOs
         public List<ExecutionResultDTO> ChildExecutions { get; set; }
         public List<FailuresInExecutionDTO> Failures { get; set; }
 
+
+        public ExecutionResultDTO(ChildExecution childExecution)
+        {
+            this.TestMethodName = childExecution.TestMethodName;
+            this.TestDisplayName = childExecution.TestDisplayName;
+            this.ExecutionResult = childExecution.ExecutionResult;
+            this.ExecutionOutput = childExecution.ExecutionOutput;
+            this.ExecutionOutput = childExecution.ExecutionOutput;
+
+            if (childExecution.Failures?.Count > 0)
+            {
+                this.Failures = new List<FailuresInExecutionDTO>();
+                foreach (var executionFailure in childExecution.Failures)
+                    this.Failures.Add(new FailuresInExecutionDTO(executionFailure));
+            }
+
+            if (childExecution.ChildExecutions?.Count > 0)
+            {
+                this.ChildExecutions = new List<ExecutionResultDTO>();
+                foreach (var executionChildExecution in childExecution.ChildExecutions)
+                    this.ChildExecutions.Add(new ExecutionResultDTO(executionChildExecution));
+            }
+        }
+
+
         public ExecutionResultDTO(Execution execution)
         {
             this.TestMethodName = execution.Test.TestMethodName;
