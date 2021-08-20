@@ -26,12 +26,8 @@ export class PageFeaturesComponent implements OnInit {
 
   ngOnInit(): void {
 
-    const that = this;
-    this.route.queryParams.subscribe(() => that.loadTableData());
-
-    // this.loadTableData();
-
-    this.eventQ.on(AppEventType.VersionsLoadedEvent).subscribe(event => this.loadTableData());
+    this.route.queryParams.subscribe(() => this.loadTableData());
+    this.eventQ.on(AppEventType.VersionsLoadedEvent).subscribe(() => this.loadTableData());
 
   }
 

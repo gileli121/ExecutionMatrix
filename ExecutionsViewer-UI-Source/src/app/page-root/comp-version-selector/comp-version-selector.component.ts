@@ -16,8 +16,6 @@ export class CompVersionSelectorComponent implements OnInit {
   @Input()
   showMainFeatureSelector = false;
 
-  selectedVersionId = this.globals.selectedVersionId;
-
   constructor(
     public globals: GlobalsService
   ) {}

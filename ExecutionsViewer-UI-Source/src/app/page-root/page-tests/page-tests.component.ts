@@ -27,8 +27,8 @@ export class PageTestsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(() => this.loadTableData());
     this.eventQ.on(AppEventType.VersionsLoadedEvent).subscribe(() => this.loadTableData());
-    this.eventQ.on(AppEventType.SelectedVersionChanged).subscribe(() => this.loadTableData());
   }
 
 

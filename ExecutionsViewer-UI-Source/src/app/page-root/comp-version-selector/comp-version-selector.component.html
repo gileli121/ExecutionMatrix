@@ -2,7 +2,7 @@
 
   <span class="filter-button-container">
     <div *ngIf="!globals.versions || globals.versions.length > 0">
-      <button mat-button color="primary" [matMenuTriggerFor]="menu" (click)="globals.loadVersions(false)">
+      <button mat-button color="primary" [matMenuTriggerFor]="menu" (click)="globals.loadVersions(false,false)">
         <mat-icon style="margin-right: 10px">build</mat-icon>
         {{!globals.selectedVersionId ? 'Any Version' : 'Version ' + globals.selectedVersion?.name}}
       </button>

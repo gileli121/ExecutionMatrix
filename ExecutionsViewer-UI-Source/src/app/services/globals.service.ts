@@ -47,10 +47,10 @@ export class GlobalsService {
     }
   }
 
-  loadVersions(broadcastLoadedEvent:boolean) {
+  loadVersions(broadcastLoadedEvent:boolean,setSelectedVersion = true) {
     this.api.getVersions().subscribe((versions) => {
       this._versions = versions;
-      if (versions.length > 0 && !this._selectedVersion)
+      if (setSelectedVersion && versions.length > 0 && !this._selectedVersion)
         this.setSelectedVersionById(this._selectedVersionId ? this._selectedVersionId : versions[0].id);
 
       if (broadcastLoadedEvent)
