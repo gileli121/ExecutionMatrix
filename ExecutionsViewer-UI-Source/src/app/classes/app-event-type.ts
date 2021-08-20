@@ -1,3 +1,5 @@
 export enum AppEventType {
-  VersionsLoadedEvent
+  VersionsLoadedEvent,
+  SelectedVersionChanged,
+  SelectedMainFeatureChanged
 }

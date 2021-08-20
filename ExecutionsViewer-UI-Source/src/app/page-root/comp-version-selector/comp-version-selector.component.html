@@ -1,7 +1,8 @@
 <mat-card class="mat-card-style">
-  <span style="margin: auto">
+
+  <span class="filter-button-container">
     <div *ngIf="!globals.versions || globals.versions.length > 0">
-      <button mat-button color="primary" [matMenuTriggerFor]="menu">
+      <button mat-button color="primary" [matMenuTriggerFor]="menu" (click)="globals.loadVersions(false)">
         <mat-icon style="margin-right: 10px">build</mat-icon>
         {{!globals.selectedVersionId ? 'Any Version' : 'Version ' + globals.selectedVersion?.name}}
       </button>
@@ -14,6 +15,22 @@
     </div>
     <div *ngIf="globals.versions && globals.versions.length == 0">
       No versions available
+    </div>
+  </span>
+
+  <span *ngIf="showMainFeatureSelector" class="filter-button-container">
+    <div>
+      <button mat-button color="primary" [matMenuTriggerFor]="menu">
+        <i class="fa fa-cogs" style="font-size: 24px; margin-right: 10px"></i>
+        Any Main Feature
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="onSelectedMainFeatureChanged()">Any Main Feature</button>
+<!--        <button mat-menu-item *ngFor="let mainFeature of globals.mainFeatures"-->
+<!--                (click)="onSelectedMainFeatureChanged(mainFeature)">-->
+<!--          {{ mainFeature.featureName }}-->
+<!--        </button>-->
+      </mat-menu>
     </div>
   </span>
 </mat-card>

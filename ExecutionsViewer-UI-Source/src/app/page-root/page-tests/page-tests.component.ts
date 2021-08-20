@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {GlobalsService} from '../../services/globals.service';
 import {ApiServiceService} from '../../services/api-service.service';
-import {FeatureSummary} from "../../models/feature-summary.model";
 import {TestClassSummary} from "../../models/test-class-summary.model";
 import {ActivatedRoute, Router} from "@angular/router";
+import {EventQueueServiceService} from "../../services/event-queue-service.service";
+import {AppEventType} from "../../classes/app-event-type";
 
 @Component({
   selector: 'app-page-tests',
@@ -20,17 +21,14 @@ export class PageTestsComponent implements OnInit {
     private api: ApiServiceService,
     private globals: GlobalsService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private eventQ: EventQueueServiceService
   ) {
   }
 
   ngOnInit(): void {
-
-    const that = this;
-    this.route.queryParams.subscribe(() => that.loadTableData());
-
-    this.loadTableData();
-
+    this.eventQ.on(AppEventType.VersionsLoadedEvent).subscribe(() => this.loadTableData());
+    this.eventQ.on(AppEventType.SelectedVersionChanged).subscribe(() => this.loadTableData());
   }
 
 

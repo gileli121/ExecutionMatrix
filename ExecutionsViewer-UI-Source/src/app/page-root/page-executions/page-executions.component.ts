@@ -349,10 +349,6 @@ export class PageExecutionsComponent implements OnInit {
     this.selectedTest = undefined;
   }
 
-  get bottomHeight() {
-    if (!this.pageContainer) return 0;
-    return this.globals.rootElement ? this.globals.rootElement.offsetHeight - this.pageContainer.nativeElement.offsetHeight - 20 : 0
-  }
 
   onSelectedExecutionResult($event: TestExecution) {
     this.selectedTestExecutionResult = $event;

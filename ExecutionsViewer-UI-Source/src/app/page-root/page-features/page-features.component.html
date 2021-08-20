@@ -1,4 +1,4 @@
-<app-comp-version-selector></app-comp-version-selector>
+<app-comp-version-selector [showMainFeatureSelector]="true"></app-comp-version-selector>
 
 <div *ngIf="globals.selectedVersionId">
   <table mat-table [dataSource]="featureSummaries">

@@ -29,7 +29,7 @@ export class PageFeaturesComponent implements OnInit {
     const that = this;
     this.route.queryParams.subscribe(() => that.loadTableData());
 
-    this.loadTableData();
+    // this.loadTableData();
 
     this.eventQ.on(AppEventType.VersionsLoadedEvent).subscribe(event => this.loadTableData());
 

@@ -34,6 +34,8 @@ import { CompConsoleShowDiffsDialogComponent } from './page-root/page-executions
 import {MatDialogModule} from "@angular/material/dialog";
 import {NgxTextDiffModule} from "ngx-text-diff";
 import {ScrollingModule} from "@angular/cdk/scrolling";
+import {MatTooltipModule} from "@angular/material/tooltip";
+import { PageMainFeaturesComponent } from './page-root/page-main-features/page-main-features.component';
 
 
 @NgModule({
@@ -49,34 +51,36 @@ import {ScrollingModule} from "@angular/cdk/scrolling";
     PageFeaturesComponent,
     CompPageMessageComponent,
     CompPercentageCircleComponent,
-    CompConsoleShowDiffsDialogComponent
+    CompConsoleShowDiffsDialogComponent,
+    PageMainFeaturesComponent
   ],
-  imports: [
-    BrowserModule,
-    ScrollingModule ,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ToastrModule.forRoot({
-      positionClass: 'toast-bottom-right',
-    }),
-    BsDropdownModule.forRoot(),
-    CollapseModule.forRoot(),
-    NgxResizableModule,
-    MatSelectModule,
-    MatTableModule,
-    NgCircleProgressModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatCardModule,
-    MatMenuModule,
-    MatDividerModule,
-    MatDialogModule,
-    NgxTextDiffModule
-  ],
+    imports: [
+        BrowserModule,
+        ScrollingModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        HttpClientModule,
+        FormsModule,
+        ReactiveFormsModule,
+        ToastrModule.forRoot({
+            positionClass: 'toast-bottom-right',
+        }),
+        BsDropdownModule.forRoot(),
+        CollapseModule.forRoot(),
+        NgxResizableModule,
+        MatSelectModule,
+        MatTableModule,
+        NgCircleProgressModule,
+        MatIconModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatCardModule,
+        MatMenuModule,
+        MatDividerModule,
+        MatDialogModule,
+        NgxTextDiffModule,
+        MatTooltipModule
+    ],
   providers: [
     HttpClient,
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

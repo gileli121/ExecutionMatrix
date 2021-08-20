@@ -4,3 +4,8 @@
   margin-top: 5px;
   padding: 7px;
 }
+
+.filter-button-container {
+  margin: auto;
+  display: inline-block
+}

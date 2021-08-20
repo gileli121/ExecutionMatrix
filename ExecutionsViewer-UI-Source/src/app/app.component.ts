@@ -22,10 +22,6 @@ export class AppComponent implements OnInit{
 
     this.globals.init();
 
-
-
-    if (this.rootContainer)
-      this.globals.rootElement = this.rootContainer.nativeElement;
   }
 
 }
