@@ -1,7 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ApiServiceService} from '../../services/api-service.service';
-import {Observable} from 'rxjs';
 import {ExecutionResult} from "../../models/execution-result";
 import {DatePipe} from "@angular/common";
 import {ExecutionInTest} from "../../models/execution-in-test.model";
@@ -21,23 +20,16 @@ class FilterOption {
 }
 
 interface IFilter {
-  filterName: string;
-  filterTag: string;
-  isDisabled: boolean;
-  childFilters: IFilter[];
-
+  get filterName():string;
+  get filterTag(): string;
+  get isDisabled(): boolean;
+  get childFilters(): IFilter[];
+  onFilterAdded():void
+  onFilterRemoved():void
   initFilterOptions(onLoaded?: () => any): void;
-
   setSelectedFilter(filterOption?: FilterOption): void;
-
   unloadOptions(): void;
-
-  onFilterAdded(): void;
-
-  onFilterRemoved(): void;
-
   get selectedFilter(): FilterOption | undefined;
-
   get filterOptions(): FilterOption[];
 }
 
@@ -54,14 +46,6 @@ class ClassFilter implements IFilter {
   }
 
   unloadOptions() {
-
-  }
-
-  onFilterAdded() {
-
-  }
-
-  onFilterRemoved() {
 
   }
 
@@ -94,6 +78,12 @@ class ClassFilter implements IFilter {
 
   }
 
+  onFilterAdded(): void {
+  }
+
+  onFilterRemoved(): void {
+  }
+
 
 }
 
@@ -109,16 +99,6 @@ class VersionFilter implements IFilter {
   }
 
   unloadOptions() {
-
-  }
-
-
-  onFilterAdded() {
-
-  }
-
-
-  onFilterRemoved() {
 
   }
 
@@ -148,6 +128,12 @@ class VersionFilter implements IFilter {
       })
     else
       onLoaded();
+  }
+
+  onFilterAdded(): void {
+  }
+
+  onFilterRemoved(): void {
   }
 }
 

@@ -24,22 +24,24 @@
           <div *ngFor="let filter of usedFilters" class="filter-root-container">
 
             <div class="filter-container">
-              <mat-form-field style="width: 130px">
-                <mat-label>{{ filter.filterName }}</mat-label>
-                <mat-select value="{{filter.selectedFilter?.id}}">
+              <mat-form-field style="width: 180px;">
+                <mat-label style="font-size: 12px">{{ filter.filterName }}</mat-label>
+                <mat-select value="{{filter.selectedFilter?.id}}" disableOptionCentering="true" >
                   <mat-option *ngFor="let option of filter.filterOptions" (click)="onSelectFilterValue(filter,option)"
                               value="{{ option.id }}">
                     {{ option.name }}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
+
+
+              <div class="filter-remove-container">
+                <button mat-icon-button>
+                  <mat-icon color="primary" (click)="onRemoveFilterEvent(filter)">remove_circle</mat-icon>
+                </button>
+              </div>
             </div>
 
-            <div class="filter-remove-container">
-              <button mat-icon-button>
-                <mat-icon color="primary" (click)="onRemoveFilterEvent(filter)">remove_circle</mat-icon>
-              </button>
-            </div>
           </div>
         </div>
       </div>

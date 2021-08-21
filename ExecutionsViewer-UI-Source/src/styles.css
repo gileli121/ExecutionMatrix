@@ -56,3 +56,25 @@ table {
   color: #1462ad;
 }
 
+
+
+/*Mat Option*/
+
+.mat-select {
+  font-size: 16px !important;
+}
+
+
+.filter-container .mat-form-field-underline {
+  display: none !important;
+}
+
+.mat-select-panel {
+  transform: translate(12px, 20px) !important;
+  font-family: Lato,sans-serif;
+}
+
+.mat-option {
+  padding-left: 10px !important;
+  font-size: 14px !important;
+}
