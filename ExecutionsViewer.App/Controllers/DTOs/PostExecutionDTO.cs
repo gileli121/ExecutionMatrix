@@ -18,8 +18,7 @@ namespace ExecutionsViewer.App.Controllers.DTOs
 
         public PostTestClassDTO TestClass { get; set; }
 
-        public ICollection<string> FeatureNames { get; set; }
-        public string VersionName { get; set; }
+        public ICollection<string> Features { get; set; }
 
         [Required]
         public ExecutionResult Result { get; set; }

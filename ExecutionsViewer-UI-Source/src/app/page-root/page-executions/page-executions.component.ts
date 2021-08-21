@@ -23,10 +23,20 @@ class FilterOption {
 interface IFilter {
   filterName: string;
   filterTag: string;
+  isDisabled: boolean;
+  childFilters: IFilter[];
 
-  initFilterOptions(onLoaded: () => any): void;
+  initFilterOptions(onLoaded?: () => any): void;
 
-  selectedFilter: FilterOption | undefined;
+  setSelectedFilter(filterOption?: FilterOption): void;
+
+  unloadOptions(): void;
+
+  onFilterAdded(): void;
+
+  onFilterRemoved(): void;
+
+  get selectedFilter(): FilterOption | undefined;
 
   get filterOptions(): FilterOption[];
 }
@@ -34,12 +44,33 @@ interface IFilter {
 class ClassFilter implements IFilter {
   filterName: string = 'Test Class';
   filterTag: string = 'testClassId';
+  isDisabled = false;
+  childFilters: IFilter[] = [];
 
   cachedOptions: FilterOption[] = [];
-  selectedFilter: FilterOption | undefined = undefined;
-
+  _selectedFilter: FilterOption | undefined = undefined;
 
   constructor(public api: ApiServiceService) {
+  }
+
+  unloadOptions() {
+
+  }
+
+  onFilterAdded() {
+
+  }
+
+  onFilterRemoved() {
+
+  }
+
+  get selectedFilter(): FilterOption | undefined {
+    return this._selectedFilter;
+  }
+
+  setSelectedFilter(filterOption: FilterOption) {
+    this._selectedFilter = filterOption;
   }
 
   get filterOptions(): FilterOption[] {
@@ -47,7 +78,6 @@ class ClassFilter implements IFilter {
   }
 
   initFilterOptions(onLoaded: () => any): void {
-    let observable: Observable<void> = new Observable<void>();
     if (this.cachedOptions.length == 0)
       this.api.getTestClasses().subscribe((testClasses) => {
         for (const testClass of testClasses) {
@@ -55,25 +85,49 @@ class ClassFilter implements IFilter {
           let filterOption = new FilterOption(testClass.id, testClass.className);
           this.cachedOptions.push(filterOption);
           if (!this.selectedFilter)
-            this.selectedFilter = filterOption;
+            this.setSelectedFilter(filterOption);
         }
         onLoaded();
       });
     else
       onLoaded();
 
-    // return observable;
   }
+
+
 }
 
 class VersionFilter implements IFilter {
   filterName: string = 'Version';
   filterTag: string = 'versionId';
-
+  isDisabled = false;
+  childFilters: IFilter[] = [];
   cachedOptions: FilterOption[] = [];
-  selectedFilter: FilterOption | undefined = undefined;
+  _selectedFilter: FilterOption | undefined = undefined;
 
   constructor(public api: ApiServiceService) {
+  }
+
+  unloadOptions() {
+
+  }
+
+
+  onFilterAdded() {
+
+  }
+
+
+  onFilterRemoved() {
+
+  }
+
+  get selectedFilter(): FilterOption | undefined {
+    return this._selectedFilter;
+  }
+
+  setSelectedFilter(filterOption: FilterOption) {
+    this._selectedFilter = filterOption;
   }
 
   get filterOptions(): FilterOption[] {
@@ -87,7 +141,8 @@ class VersionFilter implements IFilter {
           if (!version.id || !version.name) continue;
           let filterOption = new FilterOption(version.id, version.name);
           this.cachedOptions.push(filterOption);
-          if (!this.selectedFilter || this.selectedFilter.id === filterOption.id) this.selectedFilter = filterOption;
+          if (!this.selectedFilter || this.selectedFilter.id === filterOption.id)
+            this.setSelectedFilter(filterOption);
         }
         onLoaded();
       })
@@ -96,14 +151,53 @@ class VersionFilter implements IFilter {
   }
 }
 
-class FeatureFilter implements IFilter {
-  filterName: string = 'Feature';
-  filterTag: string = 'featureId';
-
+class MainFeatureFilter implements IFilter {
+  filterName: string = 'Main Feature';
+  filterTag: string = 'mainFeatureId'
+  isDisabled: boolean = false;
+  _selectedFilter: FilterOption | undefined;
   cachedOptions: FilterOption[] = [];
-  selectedFilter: FilterOption | undefined = undefined;
+  childFilters: IFilter[] = [];
+  private featureFilter?:FeatureFilter;
 
   constructor(public api: ApiServiceService) {
+  }
+
+  unloadOptions() {
+
+  }
+
+  setFeatureFilter(featureFilter:FeatureFilter) {
+    this.featureFilter = featureFilter;
+    this.childFilters.push(featureFilter);
+  }
+
+
+  onFilterAdded() {
+    if (!this.featureFilter)
+      return;
+    this.featureFilter.isDisabled = false;
+  }
+
+
+  onFilterRemoved() {
+    if (!this.featureFilter)
+      return;
+    this.featureFilter.isDisabled = true;
+  }
+
+  get selectedFilter(): FilterOption | undefined {
+    return this._selectedFilter;
+  }
+
+  setSelectedFilter(filterOption: FilterOption) {
+    this._selectedFilter = filterOption;
+    if (!this.featureFilter)
+      return;
+
+    this.featureFilter.setSelectedFilter();
+    this.featureFilter.unloadOptions();
+    this.featureFilter.initFilterOptions()
   }
 
   get filterOptions(): FilterOption[] {
@@ -112,18 +206,89 @@ class FeatureFilter implements IFilter {
 
   initFilterOptions(onLoaded: () => any): void {
     if (this.cachedOptions.length == 0)
-      this.api.getFeatures().subscribe((features) => {
-        for (const feature of features) {
-          if (!feature.id || !feature.featureName) continue;
-          let filterOption = new FilterOption(feature.id, feature.featureName);
+      this.api.getMainFeatures().subscribe((mainFeatures) => {
+        for (const mainFeature of mainFeatures) {
+          if (!mainFeature.id || !mainFeature.featureName) continue;
+          let filterOption = new FilterOption(mainFeature.id, mainFeature.featureName);
           this.cachedOptions.push(filterOption);
-          if (!this.selectedFilter) this.selectedFilter = filterOption;
+          if (!this.selectedFilter)
+            this.setSelectedFilter(filterOption);
         }
         onLoaded();
-      })
+      });
     else
       onLoaded();
+
   }
+
+}
+
+class FeatureFilter implements IFilter {
+  filterName: string = 'Feature';
+  filterTag: string = 'featureId';
+  isDisabled = true;
+  childFilters: IFilter[] = [];
+  cachedOptions: FilterOption[] = [];
+  _selectedFilter: FilterOption | undefined = undefined;
+  private mainFeaturesFilter?: MainFeatureFilter;
+
+  constructor(public api: ApiServiceService) {
+  }
+
+  setMainFeatureFilter(mainFeatureFilter:MainFeatureFilter) {
+    this.mainFeaturesFilter = mainFeatureFilter;
+  }
+
+  onFilterAdded() {
+
+  }
+
+
+  onFilterRemoved() {
+
+  }
+
+  get selectedFilter(): FilterOption | undefined {
+    return this._selectedFilter;
+  }
+
+  setSelectedFilter(filterOption?: FilterOption) {
+    this._selectedFilter = filterOption;
+  }
+
+  get filterOptions(): FilterOption[] {
+    return this.cachedOptions;
+  }
+
+  unloadOptions() {
+    this.cachedOptions = [];
+  }
+
+  initFilterOptions(onLoaded?: () => any): void {
+
+    if (!this.mainFeaturesFilter || !this.mainFeaturesFilter.selectedFilter) {
+      this.cachedOptions = [];
+      return;
+    }
+
+    if (this.cachedOptions.length == 0)
+      this.api.getFeatures(this.mainFeaturesFilter.selectedFilter.id)
+        .subscribe((features) => {
+          for (const feature of features) {
+            if (!feature.id || !feature.featureName) continue;
+            let filterOption = new FilterOption(feature.id, feature.featureName);
+            this.cachedOptions.push(filterOption);
+            if (!this.selectedFilter)
+              this.setSelectedFilter(filterOption);
+          }
+          if (onLoaded)
+            onLoaded();
+        })
+    else if (onLoaded)
+      onLoaded();
+  }
+
+
 }
 
 
@@ -135,11 +300,8 @@ class FeatureFilter implements IFilter {
 })
 export class PageExecutionsComponent implements OnInit {
 
-  availableFilters: IFilter[] = [
-    new FeatureFilter(this.api),
-    new ClassFilter(this.api),
-    new VersionFilter(this.api),
-  ];
+
+  availableFilters: IFilter[] = [];
 
   usedFilters: IFilter[] = [];
 
@@ -174,6 +336,19 @@ export class PageExecutionsComponent implements OnInit {
 
   ngOnInit(): void {
 
+    let mainFeatureFilter = new MainFeatureFilter(this.api);
+    let featureFilter = new FeatureFilter(this.api);
+
+    featureFilter.setMainFeatureFilter(mainFeatureFilter);
+    mainFeatureFilter.setFeatureFilter(featureFilter);
+
+    this.availableFilters = [
+      mainFeatureFilter,
+      featureFilter,
+      new ClassFilter(this.api),
+      new VersionFilter(this.api),
+    ];
+
     const that = this;
 
     function init() {
@@ -206,32 +381,37 @@ export class PageExecutionsComponent implements OnInit {
     const that = this;
 
 
-    function loadFilterFromQuery(filterTag: string) {
+    function loadFilterFromQuery(filterTag: string, initTestsList = true) : IFilter | null {
       const filterValue = that.route.snapshot.queryParamMap.get(filterTag);
       if (filterValue) {
         let foundFilter = that.getAvailableFilterByTag(filterTag);
         if (foundFilter) {
-          foundFilter.selectedFilter = new FilterOption(parseInt(filterValue))
-          that.onAddFilterEvent(foundFilter);
+          foundFilter.setSelectedFilter(new FilterOption(parseInt(filterValue)));
+          that.onAddFilterEvent(foundFilter,initTestsList);
+          return foundFilter;
         }
       }
+      return null;
     }
 
     if (_loadFiltersFromQuery) {
       loadFilterFromQuery('testClassId');
       loadFilterFromQuery('versionId');
-      loadFilterFromQuery('featureId');
+      loadFilterFromQuery('mainFeatureId');
+      loadFilterFromQuery('featureId',false);
     }
 
-    let versionId, testClassId, featureId;
+    let versionId, testClassId, mainFeatureId, featureId;
     let testClassFilter = this.getUsedFilterByTag('testClassId');
     if (testClassFilter) testClassId = testClassFilter.selectedFilter?.id;
+    let mainFeatureFilter = this.getUsedFilterByTag('mainFeatureId');
+    if (mainFeatureFilter) mainFeatureId = mainFeatureFilter.selectedFilter?.id;
     let featureFilter = this.getUsedFilterByTag('featureId')
     if (featureFilter) featureId = featureFilter.selectedFilter?.id;
     let versionFilter = this.getUsedFilterByTag('versionId');
     if (versionFilter) versionId = versionFilter.selectedFilter?.id;
 
-    this.api.getTestsSummary(versionId, testClassId, featureId).subscribe(testsWithExecutions => {
+    this.api.getTestsSummary(versionId, testClassId, mainFeatureId, featureId).subscribe(testsWithExecutions => {
 
       if (this.selectedExecutionId) {
         for (let ex of testsWithExecutions) {
@@ -273,25 +453,36 @@ export class PageExecutionsComponent implements OnInit {
   }
 
 
-  onAddFilterEvent(filter: IFilter) {
+  onAddFilterEvent(filter: IFilter,initTestsList = true) {
     const index = this.availableFilters.indexOf(filter);
     if (index == -1) return;
     this.availableFilters.splice(index, 1);
     this.usedFilters.push(filter);
-    filter.initFilterOptions(() => {
-      this.updateFiltersInQueryUrl();
-    });
+    if (initTestsList) {
+      filter.initFilterOptions(() => {
+        this.updateFiltersInQueryUrl();
+        this.initTestsList(false);
+      });
+    }
 
+    filter.onFilterAdded();
   }
 
-  onRemoveFilterEvent(filter: IFilter) {
+  onRemoveFilterEvent(filter: IFilter, updateTestsList = true) {
     const index = this.usedFilters.indexOf(filter);
     if (index == -1) return;
     this.usedFilters.splice(index, 1);
     this.availableFilters.push(filter);
-    this.updateFiltersInQueryUrl();
+    filter.onFilterRemoved();
+    if (filter.childFilters.length > 0) {
+      for (let childFilter of filter.childFilters)
+        this.onRemoveFilterEvent(childFilter, false);
+    }
+    if (updateTestsList) {
+      this.updateFiltersInQueryUrl();
+      this.initTestsList(false);
+    }
 
-    this.initTestsList(false);
   }
 
   private updateFiltersInQueryUrl() {
@@ -356,7 +547,7 @@ export class PageExecutionsComponent implements OnInit {
 
   onSelectFilterValue(filter: IFilter, filterOption: FilterOption) {
 
-    filter.selectedFilter = filterOption;
+    filter.setSelectedFilter(filterOption);
 
     this.testsWithExecutions = [];
     this.updateFiltersInQueryUrl();

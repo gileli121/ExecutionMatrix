@@ -14,8 +14,7 @@ public class PostExecutionDTO {
     private String testMethodName;
     private String testDisplayName;
     private PostTestClassDTO testClass;
-    private List<String> featureNames;
-    private String versionName;
+    private List<String> features;
     private ExecutionResult result;
     private String output;
     private List<PostExecutionDTO> childExecutions;
@@ -112,32 +111,35 @@ public class PostExecutionDTO {
     }
 
     // This constructor is used for test that executed
-    public PostExecutionDTO(HashMap<TestDescriptor, ExtensionContextInfo> contextHashMap, TestDescriptor testDescriptor, PostTestClassDTO testClass, String versionName) {
+    public PostExecutionDTO(HashMap<TestDescriptor, ExtensionContextInfo> contextHashMap, TestDescriptor testDescriptor, PostTestClassDTO testClass) {
         this(contextHashMap, testDescriptor, (PostExecutionDTO) null);
         this.testClass = testClass;
 
         Set<TestTag> tagsSet = testDescriptor.getTags();
         if (tagsSet != null && tagsSet.size() > 0) {
-            featureNames = new ArrayList<>();
-            for (TestTag tag : tagsSet)
-                featureNames.add(Utils.splitCamelCase(tag.getName()));
+            List<String> features = new ArrayList<>();
+            for (TestTag tag : tagsSet) {
+                String feature = Utils.splitCamelCase(tag.getName());
+                if (!testClass.getMainFeatures().contains(feature))
+                    features.add(Utils.splitCamelCase(tag.getName()));
+            }
 
+            if (features.size() > 0)
+                this.features = features;
         }
-        this.versionName = versionName;
     }
 
     // This constructor is used for unexecuted test like disabled test
-    public PostExecutionDTO(PostTestClassDTO testClass, String versionName, TestDescriptor testDescriptor, ExecutionResult executionResult) {
+    public PostExecutionDTO(PostTestClassDTO testClass, TestDescriptor testDescriptor, ExecutionResult executionResult) {
         this.testClass = testClass;
-        this.versionName = versionName;
         this.testMethodName = testDescriptor.getLegacyReportingName();
         this.testDisplayName = testDescriptor.getDisplayName();
 
         Set<TestTag> tagsSet = testDescriptor.getTags();
         if (tagsSet != null && tagsSet.size() > 0) {
-            featureNames = new ArrayList<>();
+            features = new ArrayList<>();
             for (TestTag tag : tagsSet)
-                featureNames.add(Utils.splitCamelCase(tag.getName()));
+                features.add(Utils.splitCamelCase(tag.getName()));
         }
 
         this.result = executionResult;
@@ -171,20 +173,12 @@ public class PostExecutionDTO {
         this.testClass = testClass;
     }
 
-    public List<String> getFeatureNames() {
-        return featureNames;
+    public List<String> getFeatures() {
+        return features;
     }
 
-    public void setFeatureNames(List<String> featureNames) {
-        this.featureNames = featureNames;
-    }
-
-    public String getVersionName() {
-        return versionName;
-    }
-
-    public void setVersionName(String versionName) {
-        this.versionName = versionName;
+    public void setFeatures(List<String> features) {
+        this.features = features;
     }
 
     public ExecutionResult getResult() {

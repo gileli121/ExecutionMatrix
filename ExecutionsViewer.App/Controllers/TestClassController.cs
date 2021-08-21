@@ -51,11 +51,37 @@ namespace ExecutionsViewer.App.Controllers
 
         [HttpGet("GetTestClassesSummary")]
         public async Task<ActionResult<ICollection<TestClassSummaryDTO>>> GetTestClassesSummary(
-            [FromQuery] int? versionId)
+            [FromQuery] int? versionId,
+            [FromQuery] int? mainFeatureId)
         {
-            var testClasses = await db.TestClasses
-                .Include(tc => tc.Tests)
-                .ToListAsync();
+
+            List<TestClass> testClasses = null;
+
+            if (mainFeatureId == null)
+            {
+                testClasses = await db.TestClasses
+                    .Include(tc => tc.Tests)
+                    .ToListAsync();
+            }
+            else
+            {
+                var mainFeature = await db.MainFeatures
+                    .Where(mf => mf.Id == mainFeatureId)
+                    .Include(mf => mf.TestClasses)
+                    .ThenInclude(tc => tc.Tests)
+                    .FirstOrDefaultAsync();
+
+                if (mainFeature == null)
+                    return NotFound("The main featureId was not found");
+
+                testClasses = new List<TestClass>();
+                foreach (var testClass in mainFeature.TestClasses)
+                {
+                    if (!testClasses.Contains(testClass))
+                        testClasses.Add(testClass);
+                }
+            }
+
 
             var executionsQ = db.Executions.AsQueryable();
 

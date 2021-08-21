@@ -1,0 +1,12 @@
+
+.main-features-table .mat-row .mat-cell  {
+
+}
+
+.action-row-button {
+  opacity: 90%;
+}
+
+.action-row-button:hover {
+  opacity: 100%;
+}

@@ -6,23 +6,24 @@ using System.Threading.Tasks;
 
 namespace ExecutionsViewer.App.Database.Tables
 {
-    public class Feature
+    public class MainFeature
     {
-
         public int Id { get; set; }
-        [MaxLength(250)]
+
         [Required]
         public Version FirstVersion { get; set; }
+
         public int FirstVersionId { get; set; }
+
         public string FeatureName { get; set; }
-        public virtual ICollection<Test> Tests { get; set; } = new List<Test>();
+        public virtual ICollection<TestClass> TestClasses { get; set; } = new List<TestClass>();
 
-
-        public Feature()
+        public MainFeature()
         {
+
         }
 
-        public Feature(string featureName, Version firstVersion)
+        public MainFeature(string featureName, Version firstVersion)
         {
             this.FeatureName = featureName;
             this.FirstVersion = firstVersion;

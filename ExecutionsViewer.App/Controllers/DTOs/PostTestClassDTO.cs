@@ -18,5 +18,10 @@ namespace ExecutionsViewer.App.Controllers.DTOs
         [MaxLength(250)]
         public string DisplayName { get; set; }
 
+        [Required]
+        public ICollection<string> MainFeatures { get; set; }
+
+        public string VersionName { get; set; }
+
     }
 }

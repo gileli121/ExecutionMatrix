@@ -22,14 +22,14 @@
     <div>
       <button mat-button color="primary" [matMenuTriggerFor]="menu">
         <i class="fa fa-cogs" style="font-size: 24px; margin-right: 10px"></i>
-        Any Main Feature
+        {{!globals.selectedMainFeatureId ? 'Any Main Feature' : globals.selectedMainFeature?.featureName}}
       </button>
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="onSelectedMainFeatureChanged()">Any Main Feature</button>
-<!--        <button mat-menu-item *ngFor="let mainFeature of globals.mainFeatures"-->
-<!--                (click)="onSelectedMainFeatureChanged(mainFeature)">-->
-<!--          {{ mainFeature.featureName }}-->
-<!--        </button>-->
+        <button mat-menu-item *ngFor="let mainFeature of globals.mainFeatures"
+                (click)="onSelectedMainFeatureChanged(mainFeature)">
+          {{ mainFeature.featureName }}
+        </button>
       </mat-menu>
     </div>
   </span>

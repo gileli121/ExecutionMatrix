@@ -29,27 +29,21 @@ namespace ExecutionsViewer.App.Controllers
         {
             // Create the test class if not exists
 
-
-            // Create the test in the test class if not exists
-            // var tests = db.Tests
-            //     .Include(t => t.Features)
-            //     // .Include(t => t.ChildTests)
-            //     // .Include(t => t.TestOwner)
-            //     .AsEnumerable()
-            //     .Where(t =>t.TestMethodName == body.TestMethodName)
-            //     .ToList();
-
+            if (body.TestClass.MainFeatures.Count == 0)
+                return BadRequest("No main features specified for the test class");
 
             var testClass = await db.TestClasses.Where(c =>
                     c.PackageName == body.TestClass.PackageName && c.ClassName == body.TestClass.ClassName)
+                .Include(c => c.MainFeatures)
                 .FirstOrDefaultAsync();
 
-            var version = await db.Versions.Where(v => v.Name == body.VersionName).FirstOrDefaultAsync();
+            var version = await db.Versions.Where(v => v.Name == body.TestClass.VersionName).FirstOrDefaultAsync();
             if (version == null)
             {
-                version = new Database.Tables.Version(body.VersionName);
+                version = new Database.Tables.Version(body.TestClass.VersionName);
                 db.Versions.Add(version);
             }
+
 
             Test test;
             if (testClass == null)
@@ -76,44 +70,66 @@ namespace ExecutionsViewer.App.Controllers
                 }
             }
 
+            var allMainFeatures = await db.MainFeatures.Include(mf => mf.TestClasses).ToListAsync();
 
-
-
-
-
-
-
-            if (body.FeatureNames == null || body.FeatureNames.Count == 0)
-                return BadRequest("The FeatureNames field is required.");
-
-            foreach (var bodyFeatureName in body.FeatureNames)
+            foreach (var mainFeatureName in body.TestClass.MainFeatures)
             {
-                var feature = await db.Features.Where(f => f.FeatureName == bodyFeatureName).Include(f => f.Tests)
-                    .FirstOrDefaultAsync();
-                if (feature == null)
+                var mainFeature = allMainFeatures.FirstOrDefault(f => f.FeatureName == mainFeatureName);
+                if (mainFeature != null)
                 {
-                    feature = new Feature(bodyFeatureName, version);
-                    feature.Tests.Add(test);
-                    db.Features.Add(feature);
+                    if (!mainFeature.TestClasses.Contains(testClass))
+                        mainFeature.TestClasses.Add(testClass);
                 }
                 else
                 {
-                    var featureFoundInTest = test.Features.Any(testFeature => testFeature.Id == feature.Id);
-                    if (!featureFoundInTest)
-                        feature.Tests.Add(test);
+                    mainFeature = new MainFeature(mainFeatureName, version);
+                    mainFeature.TestClasses.Add(testClass);
+                    db.MainFeatures.Add(mainFeature);
                 }
             }
 
-            var i = 0;
-            while (i < test.Features.Count)
-            {
-                var featureFound =
-                    body.FeatureNames.Any(bodyFeatureName => test.Features[i].FeatureName == bodyFeatureName);
 
-                if (featureFound)
-                    i++;
-                else
-                    test.Features.RemoveAt(i);
+            // if (body.FeatureNames == null || body.FeatureNames.Count == 0)
+            // return BadRequest("The FeatureNames field is required.");
+
+            if (body.Features?.Count > 0)
+            {
+                foreach (var bodyFeatureName in body.Features)
+                {
+                    var feature = await db.Features.Where(f => f.FeatureName == bodyFeatureName).Include(f => f.Tests)
+                        .FirstOrDefaultAsync();
+                    if (feature == null)
+                    {
+                        feature = new Feature(bodyFeatureName, version);
+                        feature.Tests.Add(test);
+                        db.Features.Add(feature);
+
+                    }
+                    else
+                    {
+                        var featureFoundInTest = test.Features.Any(testFeature => testFeature.Id == feature.Id);
+                        if (!featureFoundInTest)
+                            feature.Tests.Add(test);
+                    }
+
+                }
+
+                var i = 0;
+                while (i < test.Features.Count)
+                {
+                    var featureFound =
+                        body.Features.Any(bodyFeatureName => test.Features[i].FeatureName == bodyFeatureName);
+
+                    if (featureFound)
+                        i++;
+                    else
+                        test.Features.RemoveAt(i);
+                }
+
+            }
+            else if (test.Features?.Count > 0)
+            {
+                test.Features.Clear();
             }
 
 

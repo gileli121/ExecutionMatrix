@@ -5,6 +5,7 @@ import executionmatrix.junit5.extension.annotations.TestWithVersionEnv;
 import executionmatrix.junit5.extension.internal.ExtensionContextInfo;
 import executionmatrix.junit5.extension.internal.helpers.ConsoleOutputCapturer;
 import executionmatrix.junit5.extension.internal.helpers.ReportClient;
+import executionmatrix.junit5.extension.internal.helpers.Utils;
 import executionmatrix.junit5.extension.internal.models.ExecutionResult;
 import executionmatrix.junit5.extension.internal.models.PostExecutionDTO;
 import executionmatrix.junit5.extension.internal.models.PostTestClassDTO;
@@ -19,21 +20,21 @@ import org.junit.platform.engine.TestDescriptor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ExecutionsViewerExtension implements InvocationInterceptor, BeforeEachCallback, AfterEachCallback,
         BeforeAllCallback, AfterAllCallback {
 
     private static final Logger log = LogManager.getLogger(ExecutionsViewerExtension.class);
 
-
     private PostTestClassDTO testClassDTO = null;
-
-    private String versionName = "v0.0.0";
 
     private final HashMap<TestDescriptor, ExtensionContextInfo> contexts = new HashMap<>();
 
     private ConsoleOutputCapturer outputCapturer;
+
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
@@ -42,15 +43,16 @@ public class ExecutionsViewerExtension implements InvocationInterceptor, BeforeE
         // Get here the information about the test class where all tests executing and store it
         Class<?> testClass = extensionContext.getRequiredTestClass();
 
+        String versionName = "v0.0.0";
         TestWithVersion targetVerAnn = testClass.getAnnotation(TestWithVersion.class);
         if (targetVerAnn != null) {
-            this.versionName = targetVerAnn.value();
+            versionName = targetVerAnn.value();
         } else {
             TestWithVersionEnv targetVerEnvAnn = testClass.getAnnotation(TestWithVersionEnv.class);
             if (targetVerEnvAnn != null) {
                 String versionFromEnv = System.getenv(targetVerEnvAnn.value());
                 if (versionFromEnv != null)
-                    this.versionName = versionFromEnv;
+                    versionName = versionFromEnv;
             }
         }
 
@@ -64,7 +66,19 @@ public class ExecutionsViewerExtension implements InvocationInterceptor, BeforeE
 
         String classDisplayName = extensionContext.getDisplayName();
 
-        testClassDTO = new PostTestClassDTO(packageName, className, classDisplayName);
+
+        List<String> mainFeatures = new ArrayList<>();
+        if (extensionContext.getTags() != null) {
+            for (String tag : extensionContext.getTags())
+                mainFeatures.add(Utils.splitCamelCase(tag));
+        }
+
+        if (mainFeatures.size() == 0) {
+            log.error("Did not found tags for the main tests class. Please add at least one tag to the class. Reporting is disabled.");
+            return;
+        }
+
+        testClassDTO = new PostTestClassDTO(packageName, className, classDisplayName,mainFeatures,versionName);
 
         // Setup the console capture helper
         outputCapturer = new ConsoleOutputCapturer();
@@ -84,6 +98,11 @@ public class ExecutionsViewerExtension implements InvocationInterceptor, BeforeE
     public void afterEach(ExtensionContext extensionContext) throws Exception {
         // here we will submit the execution result to the server
 
+        if (testClassDTO == null) {
+            log.error("Reporting is disabled. Please make sure you added at least one tag to the test class.");
+            return;
+        }
+
         TestDescriptor testDescriptor = getTestDescriptor(extensionContext);
         if (testDescriptor == null) {
             log.error("Failed to prepare the execution report. Reason: Failed to get TestDescriptor " +
@@ -91,7 +110,7 @@ public class ExecutionsViewerExtension implements InvocationInterceptor, BeforeE
             return;
         }
 
-        PostExecutionDTO executionDTO = new PostExecutionDTO(contexts, testDescriptor, testClassDTO, versionName);
+        PostExecutionDTO executionDTO = new PostExecutionDTO(contexts,testDescriptor, testClassDTO);
 
         ReportClient reportClient = new ReportClient();
         if (!reportClient.reportExecution(executionDTO))
@@ -100,6 +119,12 @@ public class ExecutionsViewerExtension implements InvocationInterceptor, BeforeE
 
     @Override
     public void afterAll(ExtensionContext extensionContext) throws Exception {
+
+        if (testClassDTO == null) {
+            log.error("Reporting is disabled. Please make sure you added at least one tag to the test class.");
+            return;
+        }
+
         // Here we will find any disabled tests that was not executed and report them also
         TestDescriptor rootTestDescriptor = getTestDescriptor(extensionContext);
         if (rootTestDescriptor == null) {
@@ -124,7 +149,7 @@ public class ExecutionsViewerExtension implements InvocationInterceptor, BeforeE
             if (testMethod.getAnnotation(Disabled.class) == null) continue;
 
             // We found disabled test here, prepare the report structure
-            PostExecutionDTO executionDTO = new PostExecutionDTO(testClassDTO, versionName, childTest, ExecutionResult.Skipped);
+            PostExecutionDTO executionDTO = new PostExecutionDTO(testClassDTO, childTest, ExecutionResult.Skipped);
 
             // Submit the report
             if (!reportClient.reportExecution(executionDTO))

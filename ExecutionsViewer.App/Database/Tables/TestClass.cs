@@ -21,9 +21,9 @@ namespace ExecutionsViewer.App.Database.Tables
         [MaxLength(250)]
         public string DisplayName { get; set; }
 
-        public ICollection<Test> Tests { get; set; }
+        public ICollection<Test> Tests { get; set; } = new List<Test>();
 
-        public virtual ICollection<Feature> Features { get; set; }
+        public virtual ICollection<MainFeature> MainFeatures { get; set; } = new List<MainFeature>();
 
         public TestClass()
         {

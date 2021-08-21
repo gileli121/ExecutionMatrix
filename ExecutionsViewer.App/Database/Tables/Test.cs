@@ -42,6 +42,13 @@ namespace ExecutionsViewer.App.Database.Tables
             this.TestDisplayName = executionDto.TestDisplayName;
         }
 
+        public void Update(PostExecutionDTO executionDto, TestClass testClass)
+        {
+            this.TestClass = testClass;
+            this.TestMethodName = executionDto.TestMethodName;
+            this.TestDisplayName = executionDto.TestDisplayName;
+        }
+
         public bool IsMatchToExecution(PostExecutionDTO executionDto)
         {
             if (executionDto.TestClass != null && TestClass != null)

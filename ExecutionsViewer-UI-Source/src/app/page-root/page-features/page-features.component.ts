@@ -34,7 +34,7 @@ export class PageFeaturesComponent implements OnInit {
 
   private loadTableData() {
     if (this.globals.selectedVersionId) {
-      this.api.getFeaturesSummary(this.globals.selectedVersionId).subscribe(featureSummaries => {
+      this.api.getFeaturesSummary(this.globals.selectedVersionId, this.globals.selectedMainFeatureId).subscribe(featureSummaries => {
         this.featureSummaries = featureSummaries;
       })
     }

@@ -33,7 +33,8 @@ export class PageTestsComponent implements OnInit {
 
 
   private loadTableData() {
-    this.api.getTestClassesSummary(this.globals.selectedVersionId).subscribe(classesSummaries => {
+    this.api.getTestClassesSummary(this.globals.selectedVersionId,
+      this.globals.selectedMainFeatureId).subscribe(classesSummaries => {
       this.classesSummaries = classesSummaries;
     })
   }

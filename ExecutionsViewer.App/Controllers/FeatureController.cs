@@ -28,10 +28,38 @@ namespace ExecutionsViewer.App.Controllers
 
 
         [HttpGet("GetFeatures")]
-        public async Task<ActionResult<ICollection<FeatureDTO>>> GetFeatures()
+        public async Task<ActionResult<ICollection<FeatureDTO>>> GetFeatures([FromQuery] int mainFeatureId)
         {
-            var features = await db.Features.ToListAsync();
-            var featuresDtos = features.Select(feature => new FeatureDTO(feature)).ToList();
+
+            var mainFeature = await db.MainFeatures.Where(mf => mf.Id == mainFeatureId)
+                .Include(mf => mf.TestClasses)
+                .ThenInclude(c => c.Tests)
+                .ThenInclude(t => t.Features).FirstOrDefaultAsync();
+
+
+            if (mainFeature == null)
+                return NotFound("Could not find the main feature");
+
+
+            var featuresDtos = new List<FeatureDTO>();
+
+            foreach (var testClass in mainFeature.TestClasses)
+            {
+                foreach (var test in testClass.Tests)
+                {
+                    foreach (var feature in test.Features)
+                    {
+                        if (featuresDtos.Any(fdto => fdto.FeatureName == feature.FeatureName))
+                            continue;
+
+                        featuresDtos.Add(new FeatureDTO(feature));
+                    }
+                }
+
+            }
+
+            // var features = await db.Features.ToListAsync();
+            // var featuresDtos = features.Select(feature => new FeatureDTO(feature)).ToList();
 
             return Ok(featuresDtos);
         }
@@ -52,14 +80,43 @@ namespace ExecutionsViewer.App.Controllers
 
         [HttpGet("GetFeaturesSummary")]
         public async Task<ActionResult<ICollection<FeatureSummary>>> GetFeaturesSummary(
-            [FromQuery] int versionId)
+            [FromQuery] int versionId,
+            [FromQuery] int? mainFeatureId)
         {
-            
 
-            var features = await db.Features
-                .Where(f => f.FirstVersionId <= versionId)
-                .Include(f => f.Tests)
-                .ToListAsync();
+            List<Feature> features;
+
+            if (mainFeatureId is null or 0)
+            {
+                features = await db.Features
+                    .Where(f => f.FirstVersionId <= versionId)
+                    .Include(f => f.Tests)
+                    .ToListAsync();
+            }
+            else
+            {
+                var mainFeatures = await db.MainFeatures
+                    .Where(mf => mf.Id == mainFeatureId)
+                    .Include(mf => mf.TestClasses)
+                    .ThenInclude(c => c.Tests)
+                    .ThenInclude(t => t.Features)
+                    .ToListAsync();
+
+                features = new List<Feature>();
+                foreach (var mainFeature in mainFeatures)
+                {
+                    foreach (var testClass in mainFeature.TestClasses)
+                    {
+                        foreach (var test in testClass.Tests)
+                        {
+                            foreach (var feature in test.Features.Where(feature => !features.Contains(feature)))
+                            {
+                                features.Add(feature);
+                            }
+                        }
+                    }
+                }
+            }
 
             var executionsInVersion = await db.Executions
                 .Where(e => e.VersionId == versionId)

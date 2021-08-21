@@ -12,6 +12,8 @@ namespace ExecutionsViewer.App.Database
 
         public DbSet<Feature> Features { get; set; }
 
+        public DbSet<MainFeature> MainFeatures { get; set; }
+
         public DbSet<Execution> Executions { get; set; }
 
         public DbSet<Tables.Version> Versions { get; set; }

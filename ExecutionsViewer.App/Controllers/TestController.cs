@@ -30,6 +30,7 @@ namespace ExecutionsViewer.App.Controllers
         (
             [FromQuery] int? versionId,
             [FromQuery] int? testClassId,
+            [FromQuery] int? mainFeatureId,
             [FromQuery] int? featureId)
         {
             var testsQ = db.Tests.AsQueryable();
@@ -40,10 +41,18 @@ namespace ExecutionsViewer.App.Controllers
             if (testClassId != null)
                 testsQ = testsQ.Where(t => t.TestClassId == testClassId);
 
-            if (featureId != null)
-                testsQ = testsQ
-                    .Include(t => t.Features)
-                    .Where(t => t.Features.Any(f => f.Id == featureId));
+            if (mainFeatureId != null)
+            {
+                testsQ = testsQ.Include(t => t.TestClass.MainFeatures)
+                    .Where(t => t.TestClass.MainFeatures.Any(mf => mf.Id == mainFeatureId));
+
+                if (featureId != null)
+                    testsQ = testsQ
+                        .Include(t => t.Features)
+                        .Where(t => t.Features.Any(f => f.Id == featureId));
+            }
+
+
 
             testsQ = testsQ
                 .Include(t => t.Executions).ThenInclude(e => e.Version)

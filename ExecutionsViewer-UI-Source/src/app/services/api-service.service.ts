@@ -10,6 +10,8 @@ import {FeatureInTest} from "../models/feature-in-test.model";
 import {FeatureSummary} from "../models/feature-summary.model";
 import {TestClassSummary} from "../models/test-class-summary.model";
 import {TestSummary} from "../models/test-summary.model";
+import {MainFeature} from "../models/main-feature.model";
+import {MainFeatureSummary} from "../models/main-feature-summary.model";
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +23,7 @@ export class ApiServiceService {
   getTestsSummary(
     versionId?: number,
     testClassId?: number,
+    mainFeatureId?: number,
     featureId?: number
   ): Observable<TestSummary[]> {
     let parms: any = {};
@@ -28,6 +31,8 @@ export class ApiServiceService {
     if (versionId) parms.versionId = versionId;
 
     if (testClassId) parms.testClassId = testClassId;
+
+    if (mainFeatureId) parms.mainFeatureId = mainFeatureId;
 
     if (featureId) parms.featureId = featureId;
 
@@ -82,10 +87,12 @@ export class ApiServiceService {
   }
 
 
-  getFeatures(): Observable<FeatureInTest[]> {
+  getFeatures(mainFeatureId: number): Observable<FeatureInTest[]> {
     return this.http
       .get<FeatureInTest[]>(
-        `${environment.webApi}/Feature/GetFeatures`
+        `${environment.webApi}/Feature/GetFeatures`, {
+          params: {mainFeatureId: mainFeatureId}
+        }
       )
       .pipe(
         map((result) => {
@@ -98,11 +105,34 @@ export class ApiServiceService {
   }
 
 
-  getFeaturesSummary(versionId: number): Observable<FeatureSummary[]> {
+  getMainFeatures(): Observable<MainFeature[]> {
+    return this.http
+      .get<MainFeature[]>(
+        `${environment.webApi}/MainFeature/GetMainFeatures`
+      )
+      .pipe(
+        map((result) => {
+          let modifiedResult = new Array<MainFeature>();
+          for (let resultItem of result)
+            modifiedResult.push(new MainFeature(resultItem));
+          return modifiedResult;
+        })
+      );
+  }
+
+
+  getFeaturesSummary(versionId: number, mainFeatureId: number): Observable<FeatureSummary[]> {
+
+    let parms: any = {};
+    parms.versionId = versionId;
+
+    if (mainFeatureId > 0)
+      parms.mainFeatureId = mainFeatureId;
+
     return this.http
       .get<FeatureSummary[]>(
         `${environment.webApi}/Feature/GetFeaturesSummary`, {
-          params: {versionId: versionId}
+          params: parms
         })
       .pipe(
         map((result) => {
@@ -114,13 +144,38 @@ export class ApiServiceService {
       );
   }
 
-  getTestClassesSummary(versionId?:number): Observable<TestClassSummary[]> {
-    let options = {params: {}};
+  getMainFeaturesSummary(versionId: number): Observable<MainFeatureSummary[]> {
+
+    return this.http
+      .get<MainFeatureSummary[]>(
+        `${environment.webApi}/MainFeature/GetMainFeaturesSummary`, {
+          params: {
+            versionId: versionId
+          }
+        })
+      .pipe(
+        map((result) => {
+          let modifiedResult = new Array<MainFeatureSummary>();
+          for (let resultItem of result)
+            modifiedResult.push(new MainFeatureSummary(resultItem));
+          return modifiedResult;
+        })
+      );
+  }
+
+  getTestClassesSummary(versionId?: number, mainFeatureId?:number): Observable<TestClassSummary[]> {
+    let parms: any = {};
     if (versionId)
-      options.params = {versionId: versionId}
+      parms.versionId = versionId
+
+    if (mainFeatureId)
+      parms.mainFeatureId = mainFeatureId;
+
     return this.http
       .get<TestClassSummary[]>(
-        `${environment.webApi}/TestClass/GetTestClassesSummary`,options)
+        `${environment.webApi}/TestClass/GetTestClassesSummary`, {
+          params: parms
+        })
       .pipe(
         map((result) => {
           let modifiedResult = new Array<TestClassSummary>();
