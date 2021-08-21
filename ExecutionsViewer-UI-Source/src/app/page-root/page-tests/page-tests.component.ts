@@ -44,7 +44,8 @@ export class PageTestsComponent implements OnInit {
     this.router.navigate(['/executions'], {
       queryParams: {
         versionId: this.globals.selectedVersionId ? this.globals.selectedVersionId : null,
-        testClassId: testClass.id
+        mainFeatureId: this.globals.selectedMainFeatureId,
+        testClassId: testClass.id,
       }
     });
   }

@@ -44,6 +44,7 @@ export class PageFeaturesComponent implements OnInit {
     this.router.navigate(['/executions'], {
       queryParams: {
         featureId: featureSummary.id,
+        mainFeatureId: this.globals.selectedMainFeatureId,
         versionId: this.globals.selectedVersionId ? this.globals.selectedVersionId : null
       }
     });
