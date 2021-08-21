@@ -1,48 +1,57 @@
 <app-comp-version-selector [showMainFeatureSelector]="true"></app-comp-version-selector>
 
+<div *ngIf="globals.selectedVersionId">
+  <table mat-table [dataSource]="classesSummaries">
+    <ng-container matColumnDef="className">
+      <th mat-header-cell *matHeaderCellDef>Class</th>
+      <td mat-cell *matCellDef="let row">
+        <div>{{row.optimizedName}}</div>
+        <div *ngIf="row.classInfoText" class="test-class-name-class-info">
+          {{row.classInfoText}}
+        </div>
+      </td>
+    </ng-container>
 
-<table mat-table [dataSource]="classesSummaries">
-  <ng-container matColumnDef="className">
-    <th mat-header-cell *matHeaderCellDef>Class</th>
-    <td mat-cell *matCellDef="let row">
-      <div>{{row.optimizedName}}</div>
-      <div *ngIf="row.classInfoText" class="test-class-name-class-info">
-        {{row.classInfoText}}
-      </div>
-    </td>
-  </ng-container>
+    <ng-container matColumnDef="totalTests">
+      <th mat-header-cell *matHeaderCellDef>Total Tests</th>
+      <td mat-cell *matCellDef="let row"> {{row.totalTests}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="totalTests">
-    <th mat-header-cell *matHeaderCellDef>Total Tests</th>
-    <td mat-cell *matCellDef="let row"> {{row.totalTests}} </td>
-  </ng-container>
+    <ng-container matColumnDef="totalExecutedTests">
+      <th mat-header-cell *matHeaderCellDef>Total Executed Tests</th>
+      <td mat-cell *matCellDef="let row"> {{row.totalExecutedTests}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="totalExecutedTests">
-    <th mat-header-cell *matHeaderCellDef>Total Executed Tests</th>
-    <td mat-cell *matCellDef="let row"> {{row.totalExecutedTests}} </td>
-  </ng-container>
+    <ng-container matColumnDef="totalPassedTests">
+      <th mat-header-cell *matHeaderCellDef>Total Passed Tests</th>
+      <td mat-cell *matCellDef="let row"> {{row.totalPassedTests}} </td>
+    </ng-container>
 
-  <ng-container matColumnDef="totalPassedTests">
-    <th mat-header-cell *matHeaderCellDef>Total Passed Tests</th>
-    <td mat-cell *matCellDef="let row"> {{row.totalPassedTests}} </td>
-  </ng-container>
+    <ng-container matColumnDef="coverage">
+      <th mat-header-cell *matHeaderCellDef>Coverage</th>
+      <td mat-cell *matCellDef="let row">
+        <app-comp-percentage-circle [percent]="row.coverage*100"></app-comp-percentage-circle>
+      </td>
+    </ng-container>
 
-  <ng-container matColumnDef="coverage">
-    <th mat-header-cell *matHeaderCellDef>Coverage</th>
-    <td mat-cell *matCellDef="let row"> <app-comp-percentage-circle [percent]="row.coverage*100"></app-comp-percentage-circle> </td>
-  </ng-container>
+    <ng-container matColumnDef="passRatio">
+      <th mat-header-cell *matHeaderCellDef>Pass Ratio</th>
+      <td mat-cell *matCellDef="let row">
+        <app-comp-percentage-circle [percent]="row.passRatio*100"></app-comp-percentage-circle>
+      </td>
+    </ng-container>
 
-  <ng-container matColumnDef="passRatio">
-    <th mat-header-cell *matHeaderCellDef>Pass Ratio</th>
-    <td mat-cell *matCellDef="let row"> <app-comp-percentage-circle [percent]="row.passRatio*100"></app-comp-percentage-circle>
-    </td>
-  </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let row"></td>
+    </ng-container>
 
-  <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef>Actions</th>
-    <td mat-cell *matCellDef="let row"></td>
-  </ng-container>
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr mat-row *matRowDef="let myRowData; columns: columnsToDisplay" (click)="onRowClicked(myRowData)"></tr>
+  </table>
+</div>
 
-  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-  <tr mat-row *matRowDef="let myRowData; columns: columnsToDisplay" (click)="onRowClicked(myRowData)"></tr>
-</table>
+
+<app-comp-page-message *ngIf="!globals.selectedVersionId"
+                       [pageMessage]="'Please select version to view data'">
+</app-comp-page-message>

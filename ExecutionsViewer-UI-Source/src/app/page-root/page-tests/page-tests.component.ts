@@ -19,7 +19,7 @@ export class PageTestsComponent implements OnInit {
 
   constructor(
     private api: ApiServiceService,
-    private globals: GlobalsService,
+    public globals: GlobalsService,
     private router: Router,
     private route: ActivatedRoute,
     private eventQ: EventQueueServiceService
