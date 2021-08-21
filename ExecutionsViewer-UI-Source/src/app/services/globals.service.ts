@@ -52,30 +52,36 @@ export class GlobalsService {
 
   init() {
 
+
     this.route.queryParamMap.subscribe(params => {
       const selectedVersionStr = params.get('versionId');
       if (selectedVersionStr) {
-        this.setSelectedVersionById(parseInt(selectedVersionStr));
+        // this.setSelectedVersionById(parseInt(selectedVersionStr));
+        this._selectedVersionId = parseInt(selectedVersionStr);
       }
 
       const selectedMainFeatureIdStr = params.get("mainFeatureId");
       if (selectedMainFeatureIdStr) {
-        this.setSelectedMainFeatureById(parseInt(selectedMainFeatureIdStr));
+        // this.setSelectedMainFeatureById(parseInt(selectedMainFeatureIdStr));
+        this._selectedMainFeatureId = parseInt(selectedMainFeatureIdStr);
       }
+
+      if (this._versions == undefined) {
+        this.loadVersions(true);
+      }
+
+      if (this._mainFeatures == undefined)
+        this.loadMainFeatures(true);
+
     });
 
-    if (this._versions == undefined) {
-      this.loadVersions(true);
-    }
 
-    if (this._mainFeatures == undefined)
-      this.loadMainFeatures(true);
   }
 
   loadVersions(broadcastLoadedEvent:boolean,setSelectedVersion = true) {
     this.api.getVersions().subscribe((versions) => {
       this._versions = versions;
-      if (setSelectedVersion && versions.length > 0 && !this._selectedVersion)
+      if (setSelectedVersion && versions.length > 0)
         this.setSelectedVersionById(this._selectedVersionId ? this._selectedVersionId : versions[0].id);
 
       if (broadcastLoadedEvent)
@@ -86,7 +92,7 @@ export class GlobalsService {
   loadMainFeatures(broadcastLoadedEvent:boolean,setSelectedMainFeature = true) {
     this.api.getMainFeatures().subscribe((mainFeatures) => {
       this._mainFeatures = mainFeatures;
-      if (setSelectedMainFeature && mainFeatures.length > 0 && !this._selectedMainFeature)
+      if (setSelectedMainFeature && mainFeatures.length > 0)
         this.setSelectedMainFeatureById(this._selectedMainFeatureId ? this._selectedMainFeatureId : mainFeatures[0].id);
 
       if (broadcastLoadedEvent)
