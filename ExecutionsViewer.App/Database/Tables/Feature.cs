@@ -16,6 +16,7 @@ namespace ExecutionsViewer.App.Database.Tables
         public int FirstVersionId { get; set; }
         public string FeatureName { get; set; }
         public virtual ICollection<Test> Tests { get; set; } = new List<Test>();
+        public virtual ICollection<MainFeature> MainFeatures { get; set; } = new List<MainFeature>();
 
 
         public Feature()

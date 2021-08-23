@@ -13,40 +13,9 @@ import {ApiServiceService} from "../../services/api-service.service";
 })
 export class PageMainFeaturesComponent implements OnInit {
 
-  mainFeatureSummaries: MainFeatureSummary[] = [];
-
-  columnsToDisplay = ['mainFeatureName', 'coverage', 'passRatio', 'totalTests','actions'];
-
-
-  constructor(
-    private api: ApiServiceService,
-    public globals: GlobalsService,
-    private route: ActivatedRoute,
-    private eventQ: EventQueueServiceService,
-    private router: Router,) {
+  constructor(public globals:GlobalsService) {
   }
-
-
   ngOnInit(): void {
-    this.route.queryParams.subscribe(() => this.loadTableData());
-    this.eventQ.on(AppEventType.VersionsLoadedEvent).subscribe(() => this.loadTableData());
-
   }
 
-
-  onRowClicked(featureSummary: MainFeatureSummary) {
-    this.router.navigate(['/executions'], {
-      queryParams: {
-        mainFeatureId: featureSummary.id,
-        versionId: this.globals.selectedVersionId ? this.globals.selectedVersionId : null
-      }
-    });
-  }
-
-  private loadTableData() {
-    this.api.getMainFeaturesSummary(this.globals.selectedVersionId)
-      .subscribe(mainFeatureSummaries => {
-        this.mainFeatureSummaries = mainFeatureSummaries;
-      })
-  }
 }

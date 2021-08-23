@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace ExecutionsViewer.App.Database.Extensions
 {
-    public static class ValueConversionExtensions
+    public static class DbExtensions
     {
         public static PropertyBuilder<T> HasJsonConversion<T>(this PropertyBuilder<T> propertyBuilder) where T : class, new()
         {
@@ -34,5 +34,6 @@ namespace ExecutionsViewer.App.Database.Extensions
 
             return propertyBuilder;
         }
+
     }
 }

@@ -36,6 +36,11 @@ import {NgxTextDiffModule} from "ngx-text-diff";
 import {ScrollingModule} from "@angular/cdk/scrolling";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import { PageMainFeaturesComponent } from './page-root/page-main-features/page-main-features.component';
+import { CompFeaturesPerVersionComponent } from './page-root/page-features/comp-features-per-version/comp-features-per-version.component';
+import { CompFeaturesAllVersionsComponent } from './page-root/page-features/comp-features-all-versions/comp-features-all-versions.component';
+import {ChartModule} from "primeng/chart";
+import { CompMainFeaturesPerVersionComponent } from './page-root/page-main-features/comp-main-features-per-version/comp-main-features-per-version.component';
+import { CompMainFeaturesAllVersionsComponent } from './page-root/page-main-features/comp-main-features-all-versions/comp-main-features-all-versions.component';
 
 
 @NgModule({
@@ -52,7 +57,11 @@ import { PageMainFeaturesComponent } from './page-root/page-main-features/page-m
     CompPageMessageComponent,
     CompPercentageCircleComponent,
     CompConsoleShowDiffsDialogComponent,
-    PageMainFeaturesComponent
+    PageMainFeaturesComponent,
+    CompFeaturesPerVersionComponent,
+    CompFeaturesAllVersionsComponent,
+    CompMainFeaturesPerVersionComponent,
+    CompMainFeaturesAllVersionsComponent
   ],
     imports: [
         BrowserModule,
@@ -79,7 +88,8 @@ import { PageMainFeaturesComponent } from './page-root/page-main-features/page-m
         MatDividerModule,
         MatDialogModule,
         NgxTextDiffModule,
-        MatTooltipModule
+        MatTooltipModule,
+        ChartModule
     ],
   providers: [
     HttpClient,

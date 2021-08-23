@@ -10,11 +10,13 @@ namespace ExecutionsViewer.App.Database.Tables
     {
         public int Id { get; set; }
 
-        [MaxLength(100)]
+        // [MaxLength(100)]
         [Required]
         public string Name { get; set; }
 
         public ICollection<Execution> Executions { get; set; }
+
+        public virtual ICollection<MainFeature> MainFeatures { get; set; } = new List<MainFeature>();
 
         public Version()
         {

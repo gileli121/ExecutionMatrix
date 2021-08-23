@@ -7,7 +7,7 @@ using ExecutionsViewer.App.Database.Tables;
 
 namespace ExecutionsViewer.App.Controllers.DTOs
 {
-    public class FeatureSummary
+    public class FeatureSummaryDTO
     {
         public int Id { get; set; }
 
@@ -20,12 +20,12 @@ namespace ExecutionsViewer.App.Controllers.DTOs
         public int TotalPassedTests { get; set; }
 
 
-        public FeatureSummary()
+        public FeatureSummaryDTO()
         {
 
         }
 
-        public FeatureSummary(Feature feature, int totalTests, int totalExecutedTests, int totalPassedTests)
+        public FeatureSummaryDTO(Feature feature, int totalTests, int totalExecutedTests, int totalPassedTests)
         {
             this.Id = feature.Id;
             this.FeatureName = feature.FeatureName;

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Version = ExecutionsViewer.App.Database.Tables.Version;
 
 namespace ExecutionsViewer.App.Controllers
 {
@@ -30,7 +31,6 @@ namespace ExecutionsViewer.App.Controllers
         [HttpGet("GetFeatures")]
         public async Task<ActionResult<ICollection<FeatureDTO>>> GetFeatures([FromQuery] int mainFeatureId)
         {
-
             var mainFeature = await db.MainFeatures.Where(mf => mf.Id == mainFeatureId)
                 .Include(mf => mf.TestClasses)
                 .ThenInclude(c => c.Tests)
@@ -55,7 +55,6 @@ namespace ExecutionsViewer.App.Controllers
                         featuresDtos.Add(new FeatureDTO(feature));
                     }
                 }
-
             }
 
             // var features = await db.Features.ToListAsync();
@@ -79,11 +78,10 @@ namespace ExecutionsViewer.App.Controllers
 
 
         [HttpGet("GetFeaturesSummary")]
-        public async Task<ActionResult<ICollection<FeatureSummary>>> GetFeaturesSummary(
+        public async Task<ActionResult<ICollection<FeatureSummaryDTO>>> GetFeaturesSummary(
             [FromQuery] int versionId,
             [FromQuery] int? mainFeatureId)
         {
-
             List<Feature> features;
 
             if (mainFeatureId is null or 0)
@@ -95,27 +93,17 @@ namespace ExecutionsViewer.App.Controllers
             }
             else
             {
-                var mainFeatures = await db.MainFeatures
-                    .Where(mf => mf.Id == mainFeatureId)
-                    .Include(mf => mf.TestClasses)
-                    .ThenInclude(c => c.Tests)
-                    .ThenInclude(t => t.Features)
-                    .ToListAsync();
 
-                features = new List<Feature>();
-                foreach (var mainFeature in mainFeatures)
-                {
-                    foreach (var testClass in mainFeature.TestClasses)
-                    {
-                        foreach (var test in testClass.Tests)
-                        {
-                            foreach (var feature in test.Features.Where(feature => !features.Contains(feature)))
-                            {
-                                features.Add(feature);
-                            }
-                        }
-                    }
-                }
+                var mainFeature = await db.MainFeatures
+                    .Where(mf => mf.Id == mainFeatureId)
+                    .Include(mf => mf.Features)
+                    .ThenInclude(f => f.Tests)
+                    .FirstOrDefaultAsync();
+
+
+                features = mainFeature.Features.Where(f => f.FirstVersionId <= versionId).ToList();
+
+
             }
 
             var executionsInVersion = await db.Executions
@@ -123,7 +111,7 @@ namespace ExecutionsViewer.App.Controllers
                 .OrderByDescending(e => e.ExecutionDate)
                 .ToListAsync();
 
-            var featureSummaries = new List<FeatureSummary>();
+            var featureSummaries = new List<FeatureSummaryDTO>();
             foreach (var feature in features)
             {
                 var totalTests = 0;
@@ -131,38 +119,111 @@ namespace ExecutionsViewer.App.Controllers
                 var totalPassedTests = 0;
                 foreach (var featureTest in feature.Tests)
                 {
-                    if (featureTest.FirstVersionId <= versionId)
+                    totalTests++;
+
+                    var lastExInFeature = executionsInVersion.FirstOrDefault(e => e.TestId == featureTest.Id);
+
+                    if (lastExInFeature == null)
+                        continue;
+
+                    if (lastExInFeature.ExecutionResult == ExecutionResult.Passed)
                     {
-                        totalTests++;
-
-                        var lastExInFeature = executionsInVersion.FirstOrDefault(e => e.TestId == featureTest.Id);
-
-                        if (lastExInFeature == null)
-                            continue;
-
-                        if (lastExInFeature.ExecutionResult == ExecutionResult.Passed)
-                        {
-                            totalPassedTests++;
-                            totalExecutedTests++;
-                        }
-                        else if (lastExInFeature.ExecutionResult != ExecutionResult.Skipped &&
-                                 lastExInFeature.ExecutionResult != ExecutionResult.UnExecuted)
-                        {
-                            totalExecutedTests++;
-                        }
+                        totalPassedTests++;
+                        totalExecutedTests++;
                     }
-
+                    else if (lastExInFeature.ExecutionResult != ExecutionResult.Skipped &&
+                             lastExInFeature.ExecutionResult != ExecutionResult.UnExecuted)
+                    {
+                        totalExecutedTests++;
+                    }
                 }
 
                 if (totalTests == 0)
                     continue;
 
-                var featureSummary = new FeatureSummary(feature, totalTests, totalExecutedTests, totalPassedTests);
+                var featureSummary = new FeatureSummaryDTO(feature, totalTests, totalExecutedTests, totalPassedTests);
 
                 featureSummaries.Add(featureSummary);
             }
 
             return Ok(featureSummaries);
+        }
+
+
+        [HttpGet("GetFeatureVersionStatistics")]
+        public async Task<ActionResult<ICollection<FeatureVersionStatisticsDTO>>> GetFeatureVersionStatistics(
+            [FromQuery] int? mainFeatureId,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 5)
+        {
+            var output = new List<FeatureVersionStatisticsDTO>();
+
+
+            List<Feature> features;
+            List<Version> versions;
+
+
+            if (mainFeatureId != null)
+            {
+
+                var mainFeature = await db.MainFeatures
+                    .Where(mf => mf.Id == mainFeatureId)
+                    .Include(mf => mf.Features).ThenInclude(f => f.Tests).ThenInclude(t => t.Executions)
+                    .Include(mf => mf.Versions)
+                    .FirstOrDefaultAsync();
+
+                if (mainFeature == null)
+                    return BadRequest("The mainFeature was not found");
+
+                features = mainFeature.Features.ToList();
+                versions = mainFeature.Versions.OrderByDescending(v => v.Id).ToList();
+            }
+            else
+            {
+                features = await db.Features
+                    .Include(f => f.Tests).ThenInclude(t => t.Executions)
+                    .ToListAsync();
+
+                versions = await db.Versions.OrderByDescending(v => v.Id).Skip((page - 1) * pageSize).Take(pageSize)
+                    .ToListAsync();
+            }
+
+
+            foreach (var feature in features)
+            {
+                var statistics = new List<StatisticsInVersionDTO>();
+                foreach (var version in versions)
+                {
+                    var tests = feature.Tests.Where(t => t.FirstVersionId >= feature.FirstVersionId);
+
+                    var totalTests = 0;
+                    var totalExecutions = 0;
+                    var totalPassedExecutions = 0;
+
+                    foreach (var test in tests)
+                    {
+                        totalTests++;
+                        var lastExecution = test.Executions
+                            .Where(e => e.VersionId == version.Id)
+                            .OrderByDescending(e => e.Id)
+                            .FirstOrDefault();
+
+                        if (lastExecution == null)
+                            continue;
+
+                        totalExecutions++;
+                        if (lastExecution.ExecutionResult == ExecutionResult.Passed)
+                            totalPassedExecutions++;
+                    }
+
+                    statistics.Add(new StatisticsInVersionDTO(version, totalTests, totalExecutions,
+                        totalPassedExecutions));
+                }
+
+                output.Add(new FeatureVersionStatisticsDTO(feature, statistics));
+            }
+
+            return output;
         }
     }
 }

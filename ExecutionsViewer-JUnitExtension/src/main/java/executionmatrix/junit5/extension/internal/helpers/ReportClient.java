@@ -33,7 +33,7 @@ public class ReportClient {
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
             String executionResultJson = GSON.toJson(executionDTO);
 
-//            System.out.println(executionResultJson);
+            System.out.println(executionResultJson);
 
             HttpPost request = new HttpPost(REPORTS_SERVER_ADDRESS + "/api/ReportExtension/SubmitExecution");
             StringEntity params = new StringEntity(executionResultJson);

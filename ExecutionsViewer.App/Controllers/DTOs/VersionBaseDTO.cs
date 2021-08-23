@@ -6,17 +6,12 @@ using ExecutionsViewer.App.Database.Tables;
 
 namespace ExecutionsViewer.App.Controllers.DTOs
 {
-    public class VersionInExecutionDTO
+    public class VersionBaseDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public VersionInExecutionDTO()
-        {
-
-        }
-
-        public VersionInExecutionDTO(Version version)
+        public VersionBaseDTO(Version version)
         {
             this.Id = version.Id;
             this.Name = version.Name;

@@ -10,20 +10,37 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(ExecutionsViewerExtension.class)
 @TestWithVersion("v1")
 @DisplayName("Sanity Tests")
-@Tag("MainFeatureA")
-public class TestsCollection1 {
+@Tag("MainFeatureB")
+public class TestsCollection2 {
 
 
     @Test
-    @Tag("SubFeatureA1")
+    @Tag("SubFeatureB1")
     public void test1() {
 
     }
 
 
     @Test
-    @Tag("SubFeatureA2")
+    @Tag("SubFeatureB2")
     public void test2() {
+
+    }
+
+    @Test
+    @Tag("SubFeatureB3")
+    public void test3_inFeatureBOnly() {
+
+    }
+
+    @Test
+    @Tag("SubFeatureB3")
+    public void test4_inFeatureBOnly_secondFeatureB3() {
+
+    }
+
+    @Test
+    public void test5_inFeatureBOnly() {
 
     }
 

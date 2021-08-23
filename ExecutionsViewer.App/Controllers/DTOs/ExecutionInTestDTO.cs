@@ -18,7 +18,7 @@ namespace ExecutionsViewer.App.Controllers.DTOs
 
         public DateTime? ExecutionDate { get; set; }
 
-        public VersionInExecutionDTO Version { get; set; }
+        public VersionBaseDTO Version { get; set; }
 
         public List<ExecutionInTestDTO> ChildExecutions { get; set; }
 
@@ -47,7 +47,7 @@ namespace ExecutionsViewer.App.Controllers.DTOs
             this.ExecutionResult = execution.ExecutionResult;
             this.ExecutionDate = execution.ExecutionDate;
             if (execution.Version != null)
-                this.Version = new VersionInExecutionDTO(execution.Version);
+                this.Version = new VersionBaseDTO(execution.Version);
             if (execution.ChildExecutions != null)
             {
                 this.ChildExecutions = new List<ExecutionInTestDTO>();

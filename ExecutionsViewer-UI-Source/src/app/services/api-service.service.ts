@@ -12,6 +12,8 @@ import {TestClassSummary} from "../models/test-class-summary.model";
 import {TestSummary} from "../models/test-summary.model";
 import {MainFeature} from "../models/main-feature.model";
 import {MainFeatureSummary} from "../models/main-feature-summary.model";
+import {FeatureVersionStatistics} from "../models/feature-version-statistics.model";
+import {MainFeatureVersionStatistics} from "../models/main-feature-version-statistics.model";
 
 @Injectable({
   providedIn: 'root',
@@ -144,6 +146,50 @@ export class ApiServiceService {
       );
   }
 
+  getFeatureVersionStatistics(mainFeatureId: number, pageNumber: number, pageSize: number): Observable<FeatureVersionStatistics[]> {
+    let parms: any = {};
+    parms.pageNumber = pageNumber;
+    parms.pageSize = pageSize;
+
+    if (mainFeatureId)
+      parms.mainFeatureId = mainFeatureId;
+
+    return this.http
+      .get<FeatureVersionStatistics[]>(
+        `${environment.webApi}/Feature/GetFeatureVersionStatistics`, {
+          params: parms
+        })
+      .pipe(
+        map((result) => {
+          let modifiedResult = new Array<FeatureVersionStatistics>();
+          for (let resultItem of result)
+            modifiedResult.push(new FeatureVersionStatistics(resultItem));
+          return modifiedResult;
+        })
+      );
+  }
+
+
+  getMainFeatureVersionStatistics(pageNumber: number, pageSize: number): Observable<MainFeatureVersionStatistics[]> {
+
+    return this.http
+      .get<MainFeatureVersionStatistics[]>(
+        `${environment.webApi}/MainFeature/GetMainFeatureVersionStatistics`, {
+          params: {
+            pageNumber: pageNumber,
+            pageSize: pageSize
+          }
+        })
+      .pipe(
+        map((result) => {
+          let modifiedResult = new Array<MainFeatureVersionStatistics>();
+          for (let resultItem of result)
+            modifiedResult.push(new MainFeatureVersionStatistics(resultItem));
+          return modifiedResult;
+        })
+      );
+  }
+
   getMainFeaturesSummary(versionId: number): Observable<MainFeatureSummary[]> {
 
     return this.http
@@ -163,7 +209,7 @@ export class ApiServiceService {
       );
   }
 
-  getTestClassesSummary(versionId?: number, mainFeatureId?:number): Observable<TestClassSummary[]> {
+  getTestClassesSummary(versionId?: number, mainFeatureId?: number): Observable<TestClassSummary[]> {
     let parms: any = {};
     if (versionId)
       parms.versionId = versionId

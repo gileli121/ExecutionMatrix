@@ -7,6 +7,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 
+import java.util.Random;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,14 +15,26 @@ import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 @ExtendWith(ExecutionsViewerExtension.class)
-@TestWithVersion("v1")
+@TestWithVersion("v5")
 @DisplayName("Sanity Tests")
-@Tag("BasicUserFunctionality")
+@Tag("Account")
 public class DynamicTestsExample {
+
+    private static Random rd;
+    @BeforeAll
+    public static void setup() {
+        rd = new Random();
+    }
+
+    private void randomFail() {
+        if (rd.nextBoolean())
+            fail();
+    }
+
 
     @TestFactory
     @DisplayName("Login Tests")
-    @Tag("Account")
+    @Tag("Login")
     Stream<DynamicNode> loginTests() {
         return Stream.of(
                 dynamicTest("Login with valid username", () -> {
@@ -30,6 +43,7 @@ public class DynamicTestsExample {
                     app.login("user1","1234");
                     assertTrue(app.isLoggedIn(),"Failed to log in");
                     fail("Failed to login!");
+                    randomFail();
                 }),
                 dynamicContainer("Failure login tests", Stream.of(
                         dynamicTest("Login with invalid password", () -> {
@@ -37,6 +51,7 @@ public class DynamicTestsExample {
                             MyFakeBlogWebApp app = new MyFakeBlogWebApp();
                             app.login("invalidUser","invalidPassword");
                             assertFalse(app.isLoggedIn(),"Expected the login to fail but succeed instead");
+                            randomFail();
                         }),
                         dynamicTest("Block login attempts after 10 failed logins", () -> {
                             System.out.println("Testing block login attempts after 10 failed logins ...");
@@ -46,6 +61,7 @@ public class DynamicTestsExample {
 
                             assertThrows(RuntimeException.class,() -> app.login("invalidUser",
                                     "invalidPassword"),"The app did not blocked attempt number 11 to login");
+                            randomFail();
 
                         })
                 ))
@@ -55,7 +71,7 @@ public class DynamicTestsExample {
 
     @TestFactory
     @DisplayName("Register Tests")
-    @Tag("Account")
+    @Tag("Register")
     Stream<DynamicNode> registerTests() {
         return Stream.of(
                 dynamicTest("Register with valid username & password", () -> {
@@ -64,6 +80,7 @@ public class DynamicTestsExample {
                     app.register("user2","1234");
                     app.login("user2","1234");
                     assertTrue(app.isLoggedIn(),"Register failed (Failed to log in)");
+                    randomFail();
                 }),
                 dynamicContainer("Failure register tests", Stream.of(
                         dynamicContainer("Field validation tests", Stream.of(
@@ -72,12 +89,14 @@ public class DynamicTestsExample {
                                     MyFakeBlogWebApp app = new MyFakeBlogWebApp();
                                     assertThrows(RuntimeException.class, () -> app.register("","1234"),
                                             "Expected to fail register due to empty username field");
+                                    randomFail();
                                 }),
                                 dynamicTest("Register with empty password field", () -> {
                                     System.out.println("Testing register with empty password field ...");
                                     MyFakeBlogWebApp app = new MyFakeBlogWebApp();
                                     assertThrows(RuntimeException.class, () -> app.register("user2",""),
                                             "Expected to fail register due to empty password field");
+                                    randomFail();
                                 })
                         )),
                         dynamicTest("Block register attempts after 10 failed attempts", () -> {
@@ -91,14 +110,13 @@ public class DynamicTestsExample {
 
                             assertThrows(RuntimeException.class,() -> app.register("",
                                     "invalidPassword"),"The app did not blocked attempt number 11 to login");
-
+                            randomFail();
                         })
                 ))
         );
     }
 
     @TestFactory
-    @Tag("BlogsFunctionality")
     @DisplayName("Post Blogs Tests")
     Stream<DynamicNode> testBlogsFunctionality() {
         MyFakeBlogWebApp app = new MyFakeBlogWebApp();
@@ -110,6 +128,7 @@ public class DynamicTestsExample {
                     app.postBlog("Blog Title 1","Blog Content 1");
                     String lastBlogTitle = app.getLastBlogPostTitle();
                     assertEquals("Blog Title 1",lastBlogTitle,"Posting the blog failed because the blog title was wrong");
+                    randomFail();
                 }),
                 dynamicContainer("Failure blog post tests", Stream.of(
                         dynamicContainer("Field validation tests", Stream.of(
@@ -117,11 +136,13 @@ public class DynamicTestsExample {
                                     System.out.println("Testing post blog with empty title field ...");
                                     assertThrows(RuntimeException.class, () -> app.postBlog("","blogContent"),
                                             "Expected to fail posting blog due to empty blogTitle field");
+                                    randomFail();
                                 }),
                                 dynamicTest("Post blog with empty content field", () -> {
                                     System.out.println("Testing post blog with empty content field ...");
                                     assertThrows(RuntimeException.class, () -> app.postBlog("blogTitle1",""),
                                             "Expected to fail posting blog due to empty blogContent field");
+                                    randomFail();
                                 })
                         ))
                 ))

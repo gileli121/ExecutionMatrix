@@ -78,3 +78,42 @@ table {
   padding-left: 10px !important;
   font-size: 14px !important;
 }
+
+
+/* Custom Table */
+
+.column-item {
+  text-align: center !important;
+}
+
+.column-item-main {
+  /*font-weight: bold;*/
+  font-size: 18px;
+}
+
+.column-item-header {
+  line-height: 80px;
+}
+
+.column-item-first-col-header {
+  padding: 0;
+  border-right-width: 1px;
+  border-right-style: solid;
+  border-color: rgba(0,0,0,.12);
+}
+
+.column-item-other-col-header {
+  padding: 0;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-color: rgba(0,0,0,.12);
+}
+
+.column-item-first-col {
+  padding: 0;
+  border-right-width: 1px;
+  border-right-style: solid;
+  border-bottom-width: 0 !important;
+  border-bottom-color: transparent !important;
+  border-right-color: rgba(0,0,0,.12);
+}

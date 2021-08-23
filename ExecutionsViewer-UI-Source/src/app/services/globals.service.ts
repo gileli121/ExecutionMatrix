@@ -60,6 +60,7 @@ export class GlobalsService {
         this._selectedVersionId = parseInt(selectedVersionStr);
       }
 
+
       const selectedMainFeatureIdStr = params.get("mainFeatureId");
       if (selectedMainFeatureIdStr) {
         // this.setSelectedMainFeatureById(parseInt(selectedMainFeatureIdStr));
@@ -78,29 +79,44 @@ export class GlobalsService {
 
   }
 
-  loadVersions(broadcastLoadedEvent:boolean,setSelectedVersion = true) {
+  loadVersions(broadcastLoadedEvent: boolean, setSelectedVersion = true) {
     this.api.getVersions().subscribe((versions) => {
       this._versions = versions;
-      if (setSelectedVersion && versions.length > 0)
-        this.setSelectedVersionById(this._selectedVersionId ? this._selectedVersionId : versions[0].id);
+
+      // TODO: Enable it later!
+      // if (setSelectedVersion && versions.length > 0)
+      //   this.setSelectedVersionById(this._selectedVersionId ? this._selectedVersionId : versions[0].id,true);
 
       if (broadcastLoadedEvent)
         this.eventQ.dispatch(new AppEvent(AppEventType.VersionsLoadedEvent, event));
     });
   }
 
-  loadMainFeatures(broadcastLoadedEvent:boolean,setSelectedMainFeature = true) {
+  loadMainFeatures(broadcastLoadedEvent: boolean, setSelectedMainFeature = true) {
     this.api.getMainFeatures().subscribe((mainFeatures) => {
       this._mainFeatures = mainFeatures;
       if (setSelectedMainFeature && mainFeatures.length > 0)
-        this.setSelectedMainFeatureById(this._selectedMainFeatureId ? this._selectedMainFeatureId : mainFeatures[0].id);
+        this.setSelectedMainFeatureById(this._selectedMainFeatureId ? this._selectedMainFeatureId : mainFeatures[0].id,true);
 
       if (broadcastLoadedEvent)
         this.eventQ.dispatch(new AppEvent(AppEventType.MainFeaturesLoadedEvent, event));
     });
   }
 
-  setSelectedVersion(version?:Version, updateQueryParms = false) {
+  private updateQueryParms() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        versionId: this._selectedVersionId ? this._selectedVersionId : null,
+        mainFeatureId: this._selectedMainFeatureId ? this._selectedMainFeatureId : null
+      },
+      queryParamsHandling: "merge"
+    });
+
+
+  }
+
+  setSelectedVersion(version?: Version, updateQueryParms = false) {
     if (version) {
       this._selectedVersion = version;
       this._selectedVersionId = version.id;
@@ -110,11 +126,7 @@ export class GlobalsService {
     }
 
     if (updateQueryParms) {
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: { versionId: this._selectedVersionId ? this._selectedVersionId : null },
-        queryParamsHandling: "merge"
-      });
+      this.updateQueryParms();
     }
 
     this.eventQ.dispatch(new AppEvent(AppEventType.SelectedVersionChanged));
@@ -124,22 +136,16 @@ export class GlobalsService {
     if (versionId && this._versions) {
       for (let version of this._versions) {
         if (version.id == versionId) {
-          this.setSelectedVersion(version,updateQueryParms);
+          this.setSelectedVersion(version, updateQueryParms);
           return;
         }
       }
     }
-    this.setSelectedVersion(undefined,updateQueryParms);
+    this.setSelectedVersion(undefined, updateQueryParms);
   }
 
 
-
-
-
-
-
-
-  setSelectedMainFeature(mainFeature?:MainFeature, updateQueryParms = false) {
+  setSelectedMainFeature(mainFeature?: MainFeature, updateQueryParms = false) {
     if (mainFeature) {
       this._selectedMainFeature = mainFeature;
       this._selectedMainFeatureId = mainFeature.id;
@@ -149,11 +155,7 @@ export class GlobalsService {
     }
 
     if (updateQueryParms) {
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: { mainFeatureId: this._selectedMainFeatureId ? this._selectedMainFeatureId : null },
-        queryParamsHandling: "merge"
-      });
+      this.updateQueryParms();
     }
 
     // this.eventQ.dispatch(new AppEvent(AppEventType.SelectedVersionChanged));
@@ -163,18 +165,13 @@ export class GlobalsService {
     if (mainFeatureId && this._mainFeatures) {
       for (let mainFeature of this._mainFeatures) {
         if (mainFeature.id == mainFeatureId) {
-          this.setSelectedMainFeature(mainFeature,updateQueryParms);
+          this.setSelectedMainFeature(mainFeature, updateQueryParms);
           return;
         }
       }
     }
-    this.setSelectedMainFeature(undefined,updateQueryParms);
+    this.setSelectedMainFeature(undefined, updateQueryParms);
   }
-
-
-
-
-
 
 
 }
