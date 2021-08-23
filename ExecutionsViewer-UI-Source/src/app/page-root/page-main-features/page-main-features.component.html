@@ -1,6 +1,12 @@
 <app-comp-version-selector></app-comp-version-selector>
 
 <mat-card>
-  <app-comp-main-features-per-version *ngIf="globals.selectedVersionId"></app-comp-main-features-per-version>
-  <app-comp-main-features-all-versions *ngIf="!globals.selectedVersionId"></app-comp-main-features-all-versions>
+  <div *ngIf="globals.mainFeatures && globals.mainFeatures.length > 0">
+    <app-comp-main-features-per-version *ngIf="globals.selectedVersionId"></app-comp-main-features-per-version>
+    <app-comp-main-features-all-versions *ngIf="!globals.selectedVersionId"></app-comp-main-features-all-versions>
+  </div>
+  <mat-card-title *ngIf="!globals.mainFeatures || globals.mainFeatures.length == 0" class="page-message-container-size">
+    No data available yet
+  </mat-card-title>
+
 </mat-card>

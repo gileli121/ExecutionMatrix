@@ -1,0 +1,30 @@
+<table *ngIf="testClassesStatistics && testClassesStatistics.length > 0" class="mat-table cdk-table">
+  <thead role="rowgroup">
+  <tr class="mat-header-row cdk-header-row ng-star-inserted">
+    <th class="mat-header-cell cdk-header-cell cdk-column-featureName mat-column-featureName ng-star-inserted column-item-main column-item-header column-item-first-col-header column-item-other-col-header">Class
+    </th>
+    <th *ngFor="let versionCol of versionsR1"
+        class="mat-header-cell cdk-header-cell cdk-column-featureName mat-column-featureName ng-star-inserted column-item column-item-main column-item-header column-item-other-col-header">{{versionCol.versionName}}</th>
+  </tr>
+  </thead>
+
+
+  <tbody *ngFor="let testClass of testClassesStatistics" role="rowgroup">
+  <tr class="mat-row cdk-row ng-star-inserted" (click)="onRowClicked(testClass)">
+    <td role="cell" class="mat-cell cdk-cell cdk-column-featureName mat-column-featureName ng-star-inserted column-item-main column-feature-item column-item-first-col">
+      <div>{{testClass.optimizedName}}</div>
+      <div *ngIf="testClass.classInfoText" class="test-class-name-class-info">
+        {{testClass.classInfoText}}
+      </div>
+    </td>
+    <td *ngFor="let version of testClass.statistics" role="cell" class="mat-cell cdk-cell cdk-column-featureName mat-column-featureName ng-star-inserted column-item">
+      <app-comp-percentage-circle *ngIf="version.totalTests > 0" [percent]="version.passRatio" [showSubtitle]="true" [subtitle]="'pass'"></app-comp-percentage-circle>
+    </td>
+  </tr>
+  </tbody>
+
+</table>
+
+<mat-card-title *ngIf="!testClassesStatistics || testClassesStatistics.length == 0" class="page-message-container-size">
+  No data available yet
+</mat-card-title>

@@ -31,6 +31,7 @@
   width: 90%;
   cursor: pointer;
   text-align: left;
+  text-overflow: clip;
 }
 
 .test-row-left-content {

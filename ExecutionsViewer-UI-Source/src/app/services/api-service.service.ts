@@ -14,6 +14,7 @@ import {MainFeature} from "../models/main-feature.model";
 import {MainFeatureSummary} from "../models/main-feature-summary.model";
 import {FeatureVersionStatistics} from "../models/feature-version-statistics.model";
 import {MainFeatureVersionStatistics} from "../models/main-feature-version-statistics.model";
+import {ClassVersionStatistics} from "../models/class-version-statistics.model";
 
 @Injectable({
   providedIn: 'root',
@@ -185,6 +186,25 @@ export class ApiServiceService {
           let modifiedResult = new Array<MainFeatureVersionStatistics>();
           for (let resultItem of result)
             modifiedResult.push(new MainFeatureVersionStatistics(resultItem));
+          return modifiedResult;
+        })
+      );
+  }
+
+  getTestClassStatistics(pageNumber: number, pageSize: number): Observable<ClassVersionStatistics[]> {
+    return this.http
+      .get<ClassVersionStatistics[]>(
+        `${environment.webApi}/TestClass/GetTestClassStatistics`, {
+          params: {
+            pageNumber: pageNumber,
+            pageSize: pageSize
+          }
+        })
+      .pipe(
+        map((result) => {
+          let modifiedResult = new Array<ClassVersionStatistics>();
+          for (let resultItem of result)
+            modifiedResult.push(new ClassVersionStatistics(resultItem));
           return modifiedResult;
         })
       );

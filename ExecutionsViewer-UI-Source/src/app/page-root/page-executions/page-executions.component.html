@@ -133,7 +133,7 @@
     <hr>
 
     <div class="test-result-console-container">
-      <app-comp-execution-console [testExecution]="selectedTestExecutionResult"></app-comp-execution-console>
+      <app-comp-execution-console *ngIf="selectedTestExecutionResult" [testExecution]="selectedTestExecutionResult"></app-comp-execution-console>
     </div>
 
   </mat-card>

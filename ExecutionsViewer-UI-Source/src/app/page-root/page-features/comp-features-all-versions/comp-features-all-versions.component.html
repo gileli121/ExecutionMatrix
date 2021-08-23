@@ -1,4 +1,4 @@
-<table class="mat-table cdk-table">
+<table *ngIf="featureVersionStatistics.length > 0" class="mat-table cdk-table">
   <thead role="rowgroup">
   <tr class="mat-header-row cdk-header-row ng-star-inserted">
     <th class="mat-header-cell cdk-header-cell cdk-column-featureName mat-column-featureName ng-star-inserted column-item-main column-item-header column-item-first-col-header column-item-other-col-header">Feature
@@ -19,3 +19,6 @@
   </tbody>
 
 </table>
+
+
+<mat-card-title *ngIf="!globals.mainFeatures || globals.mainFeatures.length == 0" class="page-message-container-size">No data available yet</mat-card-title>

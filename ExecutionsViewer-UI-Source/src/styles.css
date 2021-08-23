@@ -117,3 +117,9 @@ table {
   border-bottom-color: transparent !important;
   border-right-color: rgba(0,0,0,.12);
 }
+
+
+/*Page Message*/
+.page-message-container-size {
+  min-height: 70vh;
+}

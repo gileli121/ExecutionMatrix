@@ -41,6 +41,8 @@ import { CompFeaturesAllVersionsComponent } from './page-root/page-features/comp
 import {ChartModule} from "primeng/chart";
 import { CompMainFeaturesPerVersionComponent } from './page-root/page-main-features/comp-main-features-per-version/comp-main-features-per-version.component';
 import { CompMainFeaturesAllVersionsComponent } from './page-root/page-main-features/comp-main-features-all-versions/comp-main-features-all-versions.component';
+import { CompTestsPerVersionComponent } from './page-root/page-tests/comp-tests-per-version/comp-tests-per-version.component';
+import { CompTestsAllVersionsComponent } from './page-root/page-tests/comp-tests-all-versions/comp-tests-all-versions.component';
 
 
 @NgModule({
@@ -61,7 +63,9 @@ import { CompMainFeaturesAllVersionsComponent } from './page-root/page-main-feat
     CompFeaturesPerVersionComponent,
     CompFeaturesAllVersionsComponent,
     CompMainFeaturesPerVersionComponent,
-    CompMainFeaturesAllVersionsComponent
+    CompMainFeaturesAllVersionsComponent,
+    CompTestsPerVersionComponent,
+    CompTestsAllVersionsComponent
   ],
     imports: [
         BrowserModule,

@@ -84,8 +84,8 @@ export class GlobalsService {
       this._versions = versions;
 
       // TODO: Enable it later!
-      // if (setSelectedVersion && versions.length > 0)
-      //   this.setSelectedVersionById(this._selectedVersionId ? this._selectedVersionId : versions[0].id,true);
+      if (setSelectedVersion && versions.length > 0)
+        this.setSelectedVersionById(this._selectedVersionId ? this._selectedVersionId : versions[0].id,true);
 
       if (broadcastLoadedEvent)
         this.eventQ.dispatch(new AppEvent(AppEventType.VersionsLoadedEvent, event));

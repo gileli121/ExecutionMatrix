@@ -54,7 +54,6 @@ namespace ExecutionsViewer.App.Controllers
             [FromQuery] int? versionId,
             [FromQuery] int? mainFeatureId)
         {
-
             List<TestClass> testClasses = null;
 
             if (mainFeatureId == null)
@@ -120,6 +119,67 @@ namespace ExecutionsViewer.App.Controllers
             }
 
             return Ok(result);
+        }
+
+
+        [HttpGet("GetTestClassStatistics")]
+        public async Task<ActionResult<ICollection<ClassVersionStatisticsDTO>>> GetTestClassStatistics(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 5)
+        {
+            var output = new List<ClassVersionStatisticsDTO>();
+
+            var testClasses = await db.TestClasses
+                .Include(tc => tc.Tests)
+                .ToListAsync();
+            
+
+            var versions = await db.Versions
+                .Include(v => v.Executions)
+                .OrderByDescending(v => v.Id)
+                .Skip((page - 1) * pageSize).Take(pageSize)
+                .ToListAsync();
+
+
+            foreach (var testClass in testClasses)
+            {
+                var statistics = new List<StatisticsInVersionDTO>();
+
+                foreach (var version in versions)
+                {
+                    var totalTests = 0;
+                    var totalExecutions = 0;
+                    var totalPassedExecutions = 0;
+
+                    foreach (var test in testClass.Tests)
+                    {
+                        if (version.Id < test.FirstVersionId)
+                            continue;
+
+                        totalTests++;
+
+                        var lastExecution = version.Executions
+                            .Where(e => e.TestId == test.Id)
+                            .OrderByDescending(e => e.Id)
+                            .FirstOrDefault();
+
+                        if (lastExecution == null)
+                            continue;
+
+                        totalExecutions++;
+
+                        if (lastExecution.ExecutionResult == ExecutionResult.Passed)
+                            totalPassedExecutions++;
+                    }
+
+                    statistics.Add(new StatisticsInVersionDTO(version, totalTests, totalExecutions,
+                        totalPassedExecutions));
+                }
+
+                output.Add(new ClassVersionStatisticsDTO(testClass, statistics));
+            }
+
+            return output;
         }
     }
 }
