@@ -23,7 +23,7 @@ namespace ExecutionsViewer.App.Database.Tables
 
         public ICollection<Test> Tests { get; set; } = new List<Test>();
 
-        public virtual ICollection<MainFeature> MainFeatures { get; set; } = new List<MainFeature>();
+        public virtual List<MainFeature> MainFeatures { get; set; } = new List<MainFeature>();
 
         public TestClass()
         {

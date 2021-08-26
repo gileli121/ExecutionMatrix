@@ -32,6 +32,14 @@ namespace ExecutionsViewer.App.Database
         }
 
 
+        public void UpdateOrAdd(Test test)
+        {
+            if (test.Id == 0)
+                Tests.Add(test);
+            else
+                Tests.Update(test);
+        }
+
 
         public void UpdateOrAdd(Version version)
         {
